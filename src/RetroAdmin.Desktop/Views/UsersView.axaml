@@ -1,0 +1,183 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+             x:Class="RetroAdmin.Desktop.Views.UsersView"
+             x:DataType="vm:UsersViewModel">
+
+    <StackPanel Spacing="20">
+        <TextBlock Text="Users &amp; Groups"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Create New User"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="Username"
+                         Text="{Binding NewUsername}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="Password"
+                         Text="{Binding NewPassword}"
+                         PasswordChar="*"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="20">
+                    <CheckBox Content="Allow TNFS"
+                              IsChecked="{Binding NewAllowTnfs}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <CheckBox Content="Allow Econet"
+                              IsChecked="{Binding NewAllowEconet}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </StackPanel>
+
+                <Button Content="Create User"
+                        Command="{Binding CreateUserCommand}"
+                        Background="{DynamicResource RetroFSGreenBrush}"
+                        Foreground="{DynamicResource RetroFSBackgroundBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Users"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <DataGrid ItemsSource="{Binding Users}"
+                          SelectedItem="{Binding SelectedUser}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Background="{DynamicResource RetroFSBackgroundBrush}"
+                          GridLinesVisibility="None"
+                          Height="220">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="120"/>
+                        <DataGridTextColumn Header="TNFS" Binding="{Binding AllowTnfsText}" Width="55"/>
+                        <DataGridTextColumn Header="Econet" Binding="{Binding AllowEconetText}" Width="65"/>
+                        <DataGridTextColumn Header="Last TNFS" Binding="{Binding LastLoginTnfsText}" Width="130"/>
+                        <DataGridTextColumn Header="Last Econet" Binding="{Binding LastLoginEconetText}" Width="130"/>
+                        <DataGridTextColumn Header="Last failed" Binding="{Binding LastFailedLoginText}" Width="130"/>
+                        <DataGridTextColumn Header="Groups" Binding="{Binding GroupsText}" Width="*"/>
+                        <DataGridTemplateColumn Header="Actions" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Delete"
+                                            Command="{Binding $parent[UserControl].((vm:UsersViewModel)DataContext).DeleteUserCommand}"
+                                            CommandParameter="{Binding UserId}"
+                                            Background="{DynamicResource RetroFSErrorBrush}"
+                                            Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Border IsVisible="{Binding HasSelectedUser}"
+                        Background="{DynamicResource RetroFSBackgroundBrush}"
+                        BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="16"
+                        Margin="0,8,0,0">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Edit selected user"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <CheckBox Content="Allow TNFS"
+                                      IsChecked="{Binding EditAllowTnfs}"
+                                      Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                            <CheckBox Content="Allow Econet"
+                                      IsChecked="{Binding EditAllowEconet}"
+                                      Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        </StackPanel>
+
+                        <TextBox Watermark="New password (leave blank to keep current)"
+                                 Text="{Binding EditPassword}"
+                                 PasswordChar="*"
+                                 Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                                 Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                        <Button Content="Save changes"
+                                Command="{Binding SaveUserCommand}"
+                                Background="{DynamicResource RetroFSGreenBrush}"
+                                Foreground="{DynamicResource RetroFSBackgroundBrush}"
+                                HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Create New Group"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="Group Name"
+                         Text="{Binding NewGroupName}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <Button Content="Create Group"
+                        Command="{Binding CreateGroupCommand}"
+                        Background="{DynamicResource RetroFSGreenBrush}"
+                        Foreground="{DynamicResource RetroFSBackgroundBrush}"/>
+
+                <TextBlock Text="Groups"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"
+                           Margin="0,10,0,0"/>
+
+                <DataGrid ItemsSource="{Binding Groups}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Background="{DynamicResource RetroFSBackgroundBrush}"
+                          GridLinesVisibility="None"
+                          Height="150">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Group Name" Binding="{Binding GroupName}" Width="*"/>
+                        <DataGridTextColumn Header="Members" Binding="{Binding MemberCount}" Width="100"/>
+                        <DataGridTemplateColumn Header="Actions" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Delete"
+                                            Command="{Binding $parent[UserControl].((vm:UsersViewModel)DataContext).DeleteGroupCommand}"
+                                            CommandParameter="{Binding GroupId}"
+                                            Background="{DynamicResource RetroFSErrorBrush}"
+                                            Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RetroAdmin.Desktop.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+    <StackPanel Spacing="20">
+        <TextBlock Text="Server Settings"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="TNFS Configuration"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Root Directory:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBox Text="{Binding TnfsRootDirectory}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <CheckBox IsChecked="{Binding EnableUdp}"
+                          Content="Enable UDP"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="UDP Port:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding UdpPort}"
+                               Minimum="1"
+                               Maximum="65535"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <CheckBox IsChecked="{Binding EnableTcp}"
+                          Content="Enable TCP"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="TCP Port:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding TcpPort}"
+                               Minimum="1"
+                               Maximum="65535"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Econet Configuration"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Root Directory:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBox Text="{Binding EconetRootDirectory}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Disc Name:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBox Text="{Binding EconetDiscName}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <CheckBox IsChecked="{Binding EconetEnableUdp}"
+                          Content="Enable UDP AUN"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="UDP Port:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding EconetUdpPort}"
+                               Minimum="1"
+                               Maximum="65535"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                    <StackPanel Grid.Column="0" Spacing="5">
+                        <TextBlock Text="Network:"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <NumericUpDown Value="{Binding EconetNet}"
+                                       Minimum="0"
+                                       Maximum="255"
+                                       Background="{DynamicResource RetroFSBackgroundBrush}"
+                                       Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="5">
+                        <TextBlock Text="Station:"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <NumericUpDown Value="{Binding EconetStation}"
+                                       Minimum="0"
+                                       Maximum="255"
+                                       Background="{DynamicResource RetroFSBackgroundBrush}"
+                                       Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button Content="Save Settings"
+                    Command="{Binding SaveSettingsCommand}"
+                    Background="{DynamicResource RetroFSGreenBrush}"
+                    Foreground="{DynamicResource RetroFSBackgroundBrush}"
+                    Padding="15,5"/>
+
+            <Button Content="Restart Server"
+                    Command="{Binding RestartServerCommand}"
+                    Background="{DynamicResource RetroFSOrangeBrush}"
+                    Foreground="{DynamicResource RetroFSBackgroundBrush}"
+                    Padding="15,5"/>
+        </StackPanel>
+
+        <TextBlock Text="{Binding StatusMessage}"
+                   Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                   TextWrapping="Wrap"/>
+    </StackPanel>
+</UserControl>

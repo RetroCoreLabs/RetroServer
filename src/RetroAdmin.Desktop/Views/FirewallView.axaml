@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RetroAdmin.Desktop.Views.FirewallView"
+             x:DataType="vm:FirewallViewModel">
+
+    <StackPanel Spacing="20">
+        <TextBlock Text="Firewall Configuration"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <CheckBox IsChecked="{Binding FirewallEnabled}"
+                  Content="Firewall Enabled"
+                  Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+        <!-- Add Rule -->
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Add Firewall Rule"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="Rule Name"
+                         Text="{Binding NewRuleName}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="IP Pattern (e.g., 192.168.1.0/24)"
+                         Text="{Binding NewIpAddress}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <ComboBox SelectedItem="{Binding SelectedAction}"
+                          Background="{DynamicResource RetroFSBackgroundBrush}"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}">
+                    <ComboBoxItem Content="Allow"/>
+                    <ComboBoxItem Content="Deny"/>
+                </ComboBox>
+
+                <Button Content="Add Rule"
+                        Command="{Binding AddRuleCommand}"
+                        Background="{DynamicResource RetroFSGreenBrush}"
+                        Foreground="{DynamicResource RetroFSBackgroundBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Rules List -->
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Firewall Rules"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <DataGrid ItemsSource="{Binding Rules}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Background="{DynamicResource RetroFSBackgroundBrush}"
+                          GridLinesVisibility="None"
+                          Height="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Pattern" Binding="{Binding IpPattern}" Width="*"/>
+                        <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="100"/>
+                        <DataGridTemplateColumn Header="Actions" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Delete"
+                                            Command="{Binding $parent[UserControl].((vm:FirewallViewModel)DataContext).DeleteRuleCommand}"
+                                            CommandParameter="{Binding RuleId}"
+                                            Background="{DynamicResource RetroFSErrorBrush}"
+                                            Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

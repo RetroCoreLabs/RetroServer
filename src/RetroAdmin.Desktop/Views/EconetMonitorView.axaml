@@ -1,0 +1,285 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="800"
+             x:Class="RetroAdmin.Desktop.Views.EconetMonitorView"
+             x:DataType="vm:EconetMonitorViewModel">
+
+    <ScrollViewer>
+        <StackPanel Spacing="20">
+            <TextBlock Text="Econet File Server Monitor"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="15">
+                <Border Grid.Column="0"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                        BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Active Sessions"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                                   FontSize="12"/>
+                        <TextBlock Text="{Binding ActiveSessions}"
+                                   Foreground="{DynamicResource RetroFSGreenBrush}"
+                                   FontSize="32"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                        BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Total Requests"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                                   FontSize="12"/>
+                        <TextBlock Text="{Binding TotalRequests}"
+                                   Foreground="{DynamicResource RetroFSOrangeBrush}"
+                                   FontSize="32"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                        BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Bytes Transferred"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                                   FontSize="12"/>
+                        <TextBlock Text="{Binding BytesTransferred}"
+                                   Foreground="{DynamicResource RetroFSInfoBrush}"
+                                   FontSize="32"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <Border Grid.Column="0"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                        BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Server Station"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                                   FontSize="12"/>
+                        <TextBlock Text="{Binding ServerAddress}"
+                                   Foreground="{DynamicResource RetroFSOrangeBrush}"
+                                   FontSize="32"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                        BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="AUN UDP Port"
+                                   Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                                   FontSize="12"/>
+                        <TextBlock Text="{Binding UdpPort}"
+                                   Foreground="{DynamicResource RetroFSInfoBrush}"
+                                   FontSize="32"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Time Range:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                           VerticalAlignment="Center"/>
+                <ComboBox SelectedItem="{Binding SelectedTimeRange}"
+                          Width="150"
+                          Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}">
+                    <ComboBoxItem Content="Last 12 Hours"/>
+                    <ComboBoxItem Content="Last 1 Week"/>
+                    <ComboBoxItem Content="Last 1 Month"/>
+                </ComboBox>
+            </StackPanel>
+
+            <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Requests Over Time"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                    <lvc:CartesianChart Series="{Binding RequestsSeries}"
+                                        Height="200"
+                                        Background="{DynamicResource RetroFSBackgroundBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Data Transfer (MB)"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                    <lvc:CartesianChart Series="{Binding BytesSeries}"
+                                        Height="200"
+                                        Background="{DynamicResource RetroFSBackgroundBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Files Transferred"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                    <lvc:CartesianChart Series="{Binding FilesSeries}"
+                                        Height="200"
+                                        Background="{DynamicResource RetroFSBackgroundBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Logged-In Stations"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+
+                    <DataGrid ItemsSource="{Binding Sessions}"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserReorderColumns="True"
+                              Background="{DynamicResource RetroFSBackgroundBrush}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"
+                              GridLinesVisibility="Horizontal"
+                              MinHeight="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Station" Binding="{Binding Station}" Width="*" MinWidth="60" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*" MinWidth="80" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding CurrentDisc}" Width="80" MinWidth="50" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Directory" Binding="{Binding CurrentDirectory}" Width="2*" MinWidth="120" CanUserResize="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Recent Commands (last 30)"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="Request received shows bytes from the client. Server reply shows what we sent back."
+                               Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                               FontSize="11"
+                               TextWrapping="Wrap"/>
+
+                    <DataGrid ItemsSource="{Binding RecentCommands}"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserReorderColumns="True"
+                              Background="{DynamicResource RetroFSBackgroundBrush}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"
+                              GridLinesVisibility="Horizontal"
+                              MinHeight="180">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="70" MinWidth="60" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Station" Binding="{Binding Station}" Width="70" MinWidth="50" CanUserResize="True"/>
+                            <DataGridTextColumn Header="User" Binding="{Binding User}" Width="80" MinWidth="60" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Command" Binding="{Binding Command}" Width="140" MinWidth="100" CanUserResize="True"/>
+                            <DataGridTemplateColumn Header="Request received" Width="3*" MinWidth="200" CanUserResize="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Detail}"
+                                                   TextWrapping="Wrap"
+                                                   ToolTip.Tip="{Binding Detail}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Server reply" Width="*" MinWidth="100" CanUserResize="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Result}"
+                                                   TextWrapping="Wrap"
+                                                   ToolTip.Tip="{Binding Result}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Recent File Transfers (last 10)"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+
+                    <DataGrid ItemsSource="{Binding RecentTransfers}"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserReorderColumns="True"
+                              Background="{DynamicResource RetroFSBackgroundBrush}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"
+                              GridLinesVisibility="Horizontal"
+                              MinHeight="180">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="70" MinWidth="60" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Station" Binding="{Binding Station}" Width="70" MinWidth="50" CanUserResize="True"/>
+                            <DataGridTextColumn Header="User" Binding="{Binding User}" Width="80" MinWidth="60" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Direction" Binding="{Binding Direction}" Width="80" MinWidth="60" CanUserResize="True"/>
+                            <DataGridTextColumn Header="File" Binding="{Binding File}" Width="2*" MinWidth="120" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Bytes" Binding="{Binding Bytes}" Width="80" MinWidth="50" CanUserResize="True"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80" MinWidth="50" CanUserResize="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

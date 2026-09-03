@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RetroAdmin.Desktop.Views.VolumesView"
+             x:DataType="vm:VolumesViewModel">
+
+    <StackPanel Spacing="20">
+        <TextBlock Text="Volumes &amp; Files"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="15"
+                Margin="0,0,0,10">
+            <StackPanel Spacing="10">
+                <TextBlock Text="TNFS Root Directory:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBlock Text="{Binding TnfsRootPath}"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"
+                           FontFamily="Consolas"/>
+                <Button Content="Refresh"
+                        Command="{Binding LoadVolumesCommand}"
+                        Background="{DynamicResource RetroFSGreenBrush}"
+                        Foreground="{DynamicResource RetroFSBackgroundBrush}"
+                        HorizontalAlignment="Left"
+                        Padding="15,5"/>
+            </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="15">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Available Volumes &amp; Files"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <DataGrid ItemsSource="{Binding Volumes}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Background="{DynamicResource RetroFSBackgroundBrush}"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"
+                          GridLinesVisibility="Horizontal"
+                          Height="400">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="150"/>
+                        <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="2*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>RetroServer</AssemblyName>
+    <RootNamespace>RetroServer.Service</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Hosts Kestrel so the management API is served from this same process. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Microsoft.Extensions.Hosting comes from the Microsoft.AspNetCore.App shared framework referenced above, so an explicit reference is redundant on net10 (NU1510) -->
+    <!-- Lets the SAME exe run as a console app or a Windows service, decided at runtime. -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+    <!-- Microsoft.Extensions.Logging.Console comes from the Microsoft.AspNetCore.App shared framework referenced above, so an explicit reference is redundant on net10 (NU1510) -->
+    <!-- Microsoft.Extensions.Configuration.Json comes from the Microsoft.AspNetCore.App shared framework referenced above, so an explicit reference is redundant on net10 (NU1510) -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RetroIO.Server" />
+    <PackageReference Include="RetroIO.Storage.Utilities" />
+    <PackageReference Include="RetroIO.Server.Hosting" />
+    <PackageReference Include="RetroIO.Server.Core" />
+    <PackageReference Include="RetroIO.Protocols.Tnfs" />
+    <PackageReference Include="RetroIO.Protocols.Econet" />
+    <PackageReference Include="RetroIO.Identity" />
+    <PackageReference Include="RetroIO.Security.Firewall" />
+    <PackageReference Include="RetroIO.Security.Implementation" />
+    <PackageReference Include="RetroIO.Storage.Azure" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

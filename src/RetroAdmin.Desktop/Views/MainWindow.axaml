@@ -1,0 +1,117 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+        xmlns:views="using:RetroAdmin.Desktop.Views"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+        x:Class="RetroAdmin.Desktop.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="RetroFS Server UI"
+        Icon="/Assets/RetroServe-icon.png"
+        Width="1400" Height="900"
+        Background="{DynamicResource RetroFSBackgroundBrush}">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Top Menu Bar -->
+        <Border Grid.Row="0" Background="{DynamicResource RetroFSBackgroundAltBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}" BorderThickness="0,0,0,1"
+                Padding="10">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- Logo and Title -->
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Spacing="10">
+                    <TextBlock Text="🖥️" FontSize="24" VerticalAlignment="Center"/>
+                    <TextBlock VerticalAlignment="Center" FontSize="18" FontWeight="Bold">
+                        <Run Text="Retro" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        <Run Text="FS" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                        <Run Text=" Server" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- Server Status -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Status:" Foreground="{DynamicResource RetroFSLightGrayBrush}" VerticalAlignment="Center"/>
+                    <Border Background="{Binding ServerStatusBackground}"
+                            CornerRadius="10" Padding="8,4">
+                        <TextBlock Text="{Binding ServerStatus}"
+                                   Foreground="{DynamicResource RetroFSWhiteBrush}"
+                                   FontWeight="Bold"/>
+                    </Border>
+                    <Button Content="{Binding ServerButtonText}"
+                            Command="{Binding ToggleServerCommand}"
+                            Background="{Binding ServerButtonBackground}"
+                            Foreground="{DynamicResource RetroFSWhiteBrush}"
+                            Padding="15,5"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1" ColumnDefinitions="200,*">
+            <!-- Side Navigation -->
+            <Border Grid.Column="0" Background="{DynamicResource RetroFSBackgroundAltBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}" BorderThickness="0,0,1,0">
+                <StackPanel Margin="10">
+                    <Button Classes="NavButton"
+                            Content="Dashboard"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Dashboard"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="TNFS Monitor"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="TNFS"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Econet Monitor"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Econet"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Volumes"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Volumes"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Users &amp; Groups"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Users"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Logs"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Logs"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Firewall"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Firewall"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Settings"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Settings"
+                            Margin="0,5"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Content Area -->
+            <ContentControl Grid.Column="1"
+                            Content="{Binding CurrentView}"
+                            Margin="20"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"/>
+        </Grid>
+    </Grid>
+</Window>

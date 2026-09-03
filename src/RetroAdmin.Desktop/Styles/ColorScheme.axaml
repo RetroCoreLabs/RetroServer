@@ -1,0 +1,142 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+      The RetroFSXxxBrush keys are NOT defined here any more. They are supplied per theme at
+      runtime by RetroAdmin.Desktop.Themes.ThemeManager through Application.Resources.ThemeDictionaries,
+      the same way RetroCommander does it, so all eight themes re-colour the whole UI live.
+      Every reference below and in the views is {DynamicResource}; a {StaticResource} would bind
+      once at load and then ignore the theme.
+
+      The raw <Color> entries stay as documentation of the original logo palette. The control
+      styles stay because they are structural, not colour.
+    -->
+
+    <!-- RetroFS Color Scheme based on logo -->
+    <Style>
+        <Style.Resources>
+            <!-- Primary Colors from Logo -->
+            <Color x:Key="RetroFSGreen">#00FF00</Color>
+            <Color x:Key="RetroFSOrange">#FFA500</Color>
+            <Color x:Key="RetroFSDarkBlue">#1A1F2E</Color>
+            <Color x:Key="RetroFSNavyBlue">#0F1419</Color>
+
+            <!-- Text Colors -->
+            <Color x:Key="RetroFSWhite">#FFFFFF</Color>
+            <Color x:Key="RetroFSLightGray">#E0E0E0</Color>
+            <Color x:Key="RetroFSGray">#808080</Color>
+
+            <!-- UI Element Colors -->
+            <Color x:Key="RetroFSAccent">#00FF00</Color>
+            <Color x:Key="RetroFSAccentHover">#00CC00</Color>
+            <Color x:Key="RetroFSAccentPressed">#009900</Color>
+
+            <Color x:Key="RetroFSSecondary">#FFA500</Color>
+            <Color x:Key="RetroFSSecondaryHover">#FF8C00</Color>
+            <Color x:Key="RetroFSSecondaryPressed">#FF7300</Color>
+
+            <!-- Background Colors -->
+            <Color x:Key="RetroFSBackground">#1A1F2E</Color>
+            <Color x:Key="RetroFSBackgroundAlt">#0F1419</Color>
+            <Color x:Key="RetroFSBackgroundLight">#252A39</Color>
+
+            <!-- Border Colors -->
+            <Color x:Key="RetroFSBorder">#404550</Color>
+            <Color x:Key="RetroFSBorderActive">#00FF00</Color>
+
+            <!-- Status Colors -->
+            <Color x:Key="RetroFSSuccess">#00FF00</Color>
+            <Color x:Key="RetroFSWarning">#FFA500</Color>
+            <Color x:Key="RetroFSError">#FF4444</Color>
+            <Color x:Key="RetroFSInfo">#4A9EFF</Color>
+
+            <!-- SolidColorBrushes -->
+
+
+
+
+
+
+        </Style.Resources>
+    </Style>
+
+    <!-- Navigation Button Style - Text color changes on hover, background stays same -->
+    <Style Selector="Button.NavButton">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+
+    <Style Selector="Button.NavButton:pointerover">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSOrangeBrush}"/>
+    </Style>
+
+    <Style Selector="Button.NavButton:pressed">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSSecondaryPressedBrush}"/>
+    </Style>
+
+    <Style Selector="Button.NavButton /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundLightBrush}"/>
+    </Style>
+
+    <Style Selector="Button.NavButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundLightBrush}"/>
+    </Style>
+
+    <Style Selector="Button.NavButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundLightBrush}"/>
+    </Style>
+
+    <!-- DataGrid: dark theme with readable text -->
+    <Style Selector="DataGrid">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource RetroFSBorderBrush}"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource RetroFSBorderBrush}"/>
+        <Setter Property="RowBackground" Value="{DynamicResource RetroFSBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="DataGridColumnHeader">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource RetroFSBorderBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style Selector="DataGridColumnHeader TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+    </Style>
+
+    <Style Selector="DataGridCell">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="DataGridCell TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+    </Style>
+
+    <Style Selector="DataGridRow">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="DataGridRow:pointerover">
+        <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundLightBrush}"/>
+    </Style>
+
+    <Style Selector="DataGridRow:selected">
+        <Setter Property="Background" Value="{DynamicResource RetroFSNavyBlueBrush}"/>
+    </Style>
+
+    <Style Selector="DataGridRow:selected TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+    </Style>
+
+    <Style Selector="DataGrid TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+    </Style>
+</Styles>

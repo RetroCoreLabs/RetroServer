@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RetroAdmin.Desktop.Views.LogsView"
+             x:DataType="vm:LogsViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto"
+          VerticalAlignment="Stretch">
+        <TextBlock Grid.Row="0"
+                   Text="Server Logs"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSGreenBrush}"
+                   Margin="0,0,0,15"/>
+
+        <!-- Filters -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+            <TextBox Watermark="Search logs..."
+                     Text="{Binding FilterText}"
+                     Width="300"
+                     Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                     Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+            <ComboBox SelectedItem="{Binding SelectedLogLevel}"
+                      Width="150"
+                      Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                      Foreground="{DynamicResource RetroFSWhiteBrush}">
+                <ComboBoxItem Content="All"/>
+                <ComboBoxItem Content="Debug"/>
+                <ComboBoxItem Content="Info"/>
+                <ComboBoxItem Content="Warning"/>
+                <ComboBoxItem Content="Error"/>
+            </ComboBox>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding LogEntries}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  MinHeight="400"
+                  Background="{DynamicResource RetroFSBackgroundBrush}"
+                  Foreground="{DynamicResource RetroFSWhiteBrush}"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Timestamp" Binding="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Width="150"/>
+                <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="80"/>
+                <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="3"
+                Content="Clear Logs"
+                Command="{Binding ClearLogsCommand}"
+                HorizontalAlignment="Right"
+                Margin="0,10,0,0"
+                Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+    </Grid>
+</UserControl>

@@ -1,0 +1,181 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+        x:Class="RetroAdmin.Desktop.Views.LoginWindow"
+        x:DataType="vm:LoginViewModel"
+        Title="RetroServe — Connect"
+        Width="500" Height="440"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Background="{DynamicResource RetroFSBackgroundBrush}">
+
+  <!--
+    Colour rules for this window, after the first attempt got them wrong:
+
+    ONE accent colour, on the primary button only. An earlier version painted the "Start a
+    server" button amber, which on a dark background reads as a warning and fights the primary
+    action for attention. It is a solid neutral button now: same shape and weight as the primary,
+    just a surface colour instead of the accent. It is NOT an outline-only button — that version
+    was nearly invisible against the surface and gave no sense of being pressable.
+
+    Red and green appear ONLY in the status strip, and only to mean failed and succeeded. Nothing
+    else in the window is allowed to be either.
+
+    The status strip is docked to the BOTTOM. Results belong under the controls that produce
+    them, not above the thing you are about to press.
+  -->
+  <Window.Styles>
+
+    <!--
+         NO button styles here. RetroServeUI already defines the canonical dialog buttons in
+         Styles/FluentTheme.axaml: Button.dialog-primary for the confirm action and
+         Button.dialog-secondary for the neutral one. Every other dialog in the app uses them.
+
+         I invented my own here and got it wrong three times running: an amber secondary that
+         read as a warning, a primary that greyed out while merely busy, and an outline-only
+         button whose border did not render at all because Fluent draws it on
+         PART_ContentPresenter rather than on the Button. The fix is not a fourth attempt at my
+         own styles, it is to use the ones the application already has.
+    -->
+
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundAltBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource RetroFSWhiteBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource RetroFSBorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Padding" Value="10,8"/>
+      <Setter Property="CaretBrush" Value="{DynamicResource RetroFSAccentBrush}"/>
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="{DynamicResource RetroFSBorderActiveBrush}"/>
+      <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundAltBrush}"/>
+    </Style>
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundAltBrush}"/>
+    </Style>
+
+    <Style Selector="TextBlock.label">
+      <Setter Property="Foreground" Value="{DynamicResource RetroFSLightGrayBrush}"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Margin" Value="2,0,0,2"/>
+    </Style>
+
+    <!-- Status strip: grey by default. Only a real failure is red, only success is green. -->
+    <Style Selector="Border.status">
+      <Setter Property="Background" Value="{DynamicResource RetroFSBackgroundAltBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource RetroFSBorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Padding" Value="12,10"/>
+    </Style>
+    <Style Selector="Border.status.problem">
+      <Setter Property="BorderBrush" Value="{DynamicResource RetroFSErrorBrush}"/>
+    </Style>
+    <Style Selector="Border.status.found">
+      <Setter Property="BorderBrush" Value="{DynamicResource RetroFSSuccessBrush}"/>
+    </Style>
+
+    <Style Selector="TextBlock.headline">
+      <Setter Property="Foreground" Value="{DynamicResource RetroFSLightGrayBrush}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style Selector="TextBlock.headline.problem">
+      <Setter Property="Foreground" Value="{DynamicResource RetroFSErrorBrush}"/>
+    </Style>
+    <Style Selector="TextBlock.headline.found">
+      <Setter Property="Foreground" Value="{DynamicResource RetroFSSuccessBrush}"/>
+    </Style>
+
+  </Window.Styles>
+
+  <DockPanel Margin="28">
+
+    <!-- Docked bottom, so the result sits under the controls that produced it. -->
+    <Border DockPanel.Dock="Bottom"
+            Classes="status"
+            Classes.problem="{Binding IsProblem}"
+            Classes.found="{Binding IsFound}"
+            Margin="0,18,0,0">
+      <StackPanel Spacing="3">
+        <TextBlock Text="{Binding StateHeadline}"
+                   Classes="headline"
+                   Classes.problem="{Binding IsProblem}"
+                   Classes.found="{Binding IsFound}"/>
+        <TextBlock Text="{Binding StatusMessage}"
+                   TextWrapping="Wrap"
+                   FontSize="12"
+                   Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+      </StackPanel>
+    </Border>
+
+    <StackPanel DockPanel.Dock="Top" Spacing="14">
+
+      <StackPanel Spacing="2">
+        <TextBlock Text="RetroServe"
+                   FontSize="26" FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+        <TextBlock Text="Connect to a RetroFS server"
+                   FontSize="13"
+                   Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+      </StackPanel>
+
+      <StackPanel Spacing="4">
+        <TextBlock Text="SERVER ADDRESS" Classes="label"/>
+        <TextBox Text="{Binding Address}" IsEnabled="{Binding ShowConnect}"/>
+        <TextBlock Text="{Binding ConnectionDescription}"
+                   FontSize="11"
+                   Foreground="{DynamicResource RetroFSGrayBrush}"
+                   Margin="2,2,0,0"/>
+      </StackPanel>
+
+      <!-- Stage two: only once a server has answered. -->
+      <StackPanel Spacing="8" IsVisible="{Binding ShowCredentials}">
+        <StackPanel Spacing="4">
+          <TextBlock Text="USERNAME" Classes="label"/>
+          <TextBox Text="{Binding Username}"/>
+        </StackPanel>
+        <StackPanel Spacing="4">
+          <TextBlock Text="PASSWORD" Classes="label"/>
+          <TextBox Text="{Binding Password}" PasswordChar="•"/>
+        </StackPanel>
+      </StackPanel>
+
+      <!--
+           Colours, borders and hover/press states all come from dialog-primary and
+           dialog-secondary. Only SIZE is set here: those classes are built for a footer bar
+           where buttons sit side by side next to Cancel (MinWidth 104, Padding 18,7), which in
+           a full width window renders them as small stubs. Stretch and a real height make them
+           the main action of this window without touching the canonical appearance.
+      -->
+      <StackPanel Spacing="10" Margin="0,6,0,0">
+        <Button Content="{Binding ConnectButtonText}"
+                Classes="dialog-primary"
+                Command="{Binding ConnectCommand}"
+                IsVisible="{Binding ShowConnect}"
+                HorizontalAlignment="Stretch"
+                Height="42"
+                FontSize="14"/>
+
+        <Button Content="Start a server here"
+                Classes="dialog-secondary"
+                Command="{Binding StartServerCommand}"
+                IsVisible="{Binding ShowStartServer}"
+                HorizontalAlignment="Stretch"
+                Height="42"
+                FontSize="14"/>
+
+        <Button Content="Sign in"
+                Classes="dialog-primary"
+                Command="{Binding SignInCommand}"
+                IsVisible="{Binding ShowCredentials}"
+                HorizontalAlignment="Stretch"
+                Height="42"
+                FontSize="14"/>
+      </StackPanel>
+
+    </StackPanel>
+
+  </DockPanel>
+</Window>

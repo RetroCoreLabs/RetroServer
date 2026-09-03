@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RetroAdmin.Desktop/RetroAdmin.Desktop.csproj" />
+    <Project Path="src/RetroServer.Service/RetroServer.Service.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RetroAdmin.Desktop.Tests/RetroAdmin.Desktop.Tests.csproj" />
+  </Folder>
+</Solution>

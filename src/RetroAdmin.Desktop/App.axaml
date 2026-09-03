@@ -1,0 +1,43 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="RetroAdmin.Desktop.App"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             xmlns:views="using:RetroAdmin.Desktop.Views"
+             RequestedThemeVariant="Dark">
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="vm:DashboardViewModel">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:TnfsMonitorViewModel">
+            <views:TnfsMonitorView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:EconetMonitorViewModel">
+            <views:EconetMonitorView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:VolumesViewModel">
+            <views:VolumesView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:UsersViewModel">
+            <views:UsersView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:LogsViewModel">
+            <views:LogsView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:FirewallViewModel">
+            <views:FirewallView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:SettingsViewModel">
+            <views:SettingsView />
+        </DataTemplate>
+    </Application.DataTemplates>
+  
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <!-- The shared RetroFS look (tokens + fluent-* control vocabulary), then this app's
+             own NavButton and DataGrid styles on top. Order matters: the later include wins. -->
+        <StyleInclude Source="/Styles/FluentTheme.axaml"/>
+        <StyleInclude Source="/Styles/ColorScheme.axaml"/>
+    </Application.Styles>
+</Application>
