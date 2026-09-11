@@ -3,6 +3,16 @@
 **A file server for retro machines.** Two applications: a service that serves **TNFS** and **Econet/AUN** from any
 storage RetroIO can mount, and a desktop app to administer it.
 
+[![build](https://github.com/RetroCoreLabs/RetroServer/actions/workflows/build.yml/badge.svg)](https://github.com/RetroCoreLabs/RetroServer/actions/workflows/build.yml)
+[![release](https://img.shields.io/github/v/release/RetroCoreLabs/RetroServer)](https://github.com/RetroCoreLabs/RetroServer/releases)
+[![licence](https://img.shields.io/github/license/RetroCoreLabs/RetroServer)](LICENSE)
+[![downloads](https://img.shields.io/github/downloads/RetroCoreLabs/RetroServer/total)](https://github.com/RetroCoreLabs/RetroServer/releases)
+[Applications](#the-two-applications) Â· [Prerequisites](#prerequisites) Â· [How it fits together](#how-it-fits-together) Â· [About TNFS and Econet](#about-tnfs-and-econet)
+
+<!-- A 5-15 second recording: RetroServer starting, a real machine mounting a share, and
+     RetroAdmin showing the session. Under 10 MB. Uncomment when the capture exists.
+![RetroServer starting, a retro machine mounting a share over TNFS, and RetroAdmin showing the live session.](docs/images/readme/demo.gif)
+-->
 ## Why this repo exists
 
 An 8-bit machine with a network adapter — a FujiNet on an Atari, a Pi-based bridge on a BBC Micro — can reach files
@@ -24,6 +34,19 @@ NuGet packages. This repository is the **hosting** and the **administration**.
 
 ---
 
+## Status
+
+No tagged release yet, so the release and download badges above are empty until the first
+`v*` tag is pushed. Both applications build and run.
+
+- **The solution builds in Release with no errors.**
+- **TNFS and Econet/AUN are served from the same storage** - a plain directory, a disk image,
+  a remote share, or a mix of them at once.
+- **The protocols are tested in RetroIO, not here.** This repository hosts and administers;
+  one test project covers the hosting.
+- **Not yet measured:** throughput to a real 8-bit client. No number is claimed here.
+
+---
 ## Prerequisites
 
 | # | Requirement | Needed for | How to check |
@@ -157,6 +180,23 @@ this repository hosts and administers; it does not implement.
 
 Manual test procedures are in the migration notes, as `Manual tests - RetroServer.md`.
 
+## About TNFS and Econet
+
+**TNFS** - the Trivial Network File System - is how a 1980s 8-bit machine reaches files over
+a modern IP network. It is deliberately simple, runs over UDP, and is what a FujiNet cartridge
+in an Atari, or a similar adapter in a Commodore or a Spectrum, speaks when it mounts a remote
+disk. The machine sees a filesystem and knows nothing about what is behind it.
+
+**Econet** is Acorn's network from 1981, used to connect BBC Micros in British schools - one
+of the first local networks most people in the UK ever touched. **AUN** (Acorn Universal
+Networking) carries Econet over UDP/IP, so a real BBC Micro with a bridge, or an emulator, can
+reach a modern server. A Level-3 Econet file server provides the `*` commands a BBC user
+typed: `*I AM`, `*CAT`, `*LOAD`.
+
+Neither protocol is served by anything you can simply install, which is why this exists. The
+machines are still around, still work, and still expect a server to be there.
+
+---
 ## Conventions
 
 - Names follow the workspace naming standard; diagrams follow the workspace Mermaid palette. Both live one level
@@ -164,3 +204,13 @@ Manual test procedures are in the migration notes, as `Manual tests - RetroServe
   `MERMAID_COLOR_STANDARDS.md`.
 - `python eng/check-docs.py` checks every link and diagram here.
 - The org is **RetroCoreLabs**. `HackerCorpLabs` is retired.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get a build running, what the code is
+expected to look like, and what will get a change sent back. A security problem goes through
+[SECURITY.md](SECURITY.md) and never a public issue.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

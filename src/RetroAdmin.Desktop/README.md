@@ -3,6 +3,11 @@
 > **Renamed.** This application was `RetroServeUI`. It is `RetroAdmin` now, in its own repository alongside the
 > server it administers. The sections below still use some of the old wording; the behaviour is the same.
 
+<!-- A still screenshot of RetroAdmin.Desktop doing its job. PNG, under 10 MB. Uncomment when
+     the capture exists; keep the alt text, it is all a screen reader gets.
+![RetroAdmin.Desktop in use.](../../docs/images/readme/RetroAdmin.Desktop.png)
+-->
+
 ## What it is
 
 An Avalonia desktop application for **watching and administering a running RetroServer**. Start and stop the

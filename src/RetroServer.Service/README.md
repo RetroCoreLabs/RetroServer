@@ -1,5 +1,10 @@
 # RetroServer — the file server
 
+<!-- A still screenshot of RetroServer.Service doing its job. PNG, under 10 MB. Uncomment when
+     the capture exists; keep the alt text, it is all a screen reader gets.
+![RetroServer.Service in use.](../../docs/images/readme/RetroServer.Service.png)
+-->
+
 ## What it is
 
 The server. It hosts a **TNFS** server and an **Econet/AUN** file server over shared storage, exposes a REST and
