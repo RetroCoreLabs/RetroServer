@@ -1,6 +1,120 @@
-# RetroServeUI - RetroFS Server Management UI
+# RetroAdmin — the server administration app
 
-RetroServeUI is an AvaloniaUI-based graphical user interface for managing the RetroFS server. It provides a comprehensive dashboard for monitoring, configuring, and administering all aspects of the RetroFS server.
+> **Renamed.** This application was `RetroServeUI`. It is `RetroAdmin` now, in its own repository alongside the
+> server it administers. The sections below still use some of the old wording; the behaviour is the same.
+
+## What it is
+
+An Avalonia desktop application for **watching and administering a running RetroServer**. Start and stop the
+server, see live TNFS and Econet activity, manage users and groups, mount volumes, edit the firewall, and read the
+logs.
+
+## Why you need it
+
+A server is a process with no face. Everything it knows — who is connected, what they are reading, whether the
+firewall is refusing somebody, how much traffic is flowing — is reachable over the management API, and reading that
+by hand with `curl` is fine once and tiresome after that.
+
+The part that genuinely needs a GUI is the **live** view. The API pushes status and statistics over SignalR rather
+than making a client poll, so activity appears as it happens. A burst of traffic between two polls is invisible to a
+polling dashboard and visible here.
+
+It talks to the server **only over HTTP and SignalR** — the same API anything else would use. It does not reference
+the protocol implementations, which is why it can administer a server running on another machine just as easily as
+one running locally.
+
+## What you can use it for
+
+- **Starting and stopping** the server, and seeing its state.
+- Watching TNFS connections, requests and transfer volume, with graphs over 12 hours, a week or a month.
+- Watching **Econet** activity: recent commands and file transfers.
+- Managing **users and groups** — the same RetroIDP accounts every protocol authenticates against.
+- Mounting and browsing **volumes**.
+- Editing **firewall** rules, including testing a rule before enabling it.
+- Reading and filtering the server's **logs** remotely.
+
+## Prerequisites
+
+| # | Requirement | Why | How to check |
+|---|---|---|---|
+| P1 | .NET SDK as pinned in `global.json`, or the published exe | To build or run | `dotnet --info` |
+| P2 | **A Windows desktop session** | It is an Avalonia GUI | Not usable over a plain SSH session |
+| P3 | RetroIO packed to the local feed | Restore | `dir E:\Dev\RCL\localfeed` |
+| P4 | **A reachable RetroServer management API** | Everything | The URL is printed when the server starts |
+| P5 | Credentials | Anything past probing | A RetroIDP user |
+| P6 | HTTPS if it is not local | The bearer token is a credential | |
+
+> **Probe before you log in.** The client can tell "nothing is listening at this address" from "wrong password" —
+> and reporting the first as the second has wasted time before. See
+> `RetroIO.Management.Client` (`RetroIO/src/RetroIO.Management.Client/README.md`).
+
+## How it reaches the server
+
+```mermaid
+flowchart LR
+    ADMIN["RetroAdmin"]
+    PROBE["Probe: is a server there?"]
+    REST["REST<br/>Authorization: Bearer"]
+    HUB["SignalR<br/>?access_token=..."]
+    API["RetroServer's<br/>management API"]
+    SRV["The TNFS and Econet servers,<br/>storage, identity, firewall"]
+
+    ADMIN --> PROBE --> API
+    ADMIN --> REST --> API
+    ADMIN --> HUB --> API
+    API --> SRV
+
+    classDef app  fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
+    classDef q    fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#000
+    classDef sock fill:#3F51B5,stroke:#283593,stroke-width:2px,color:#fff
+    classDef core fill:#009688,stroke:#00695C,stroke-width:2px,color:#fff
+
+    class ADMIN app
+    class PROBE q
+    class REST,HUB sock
+    class API,SRV core
+```
+
+**Two different ways the token travels**, and getting it wrong gives you working REST and a hub that silently never
+connects: REST takes it in an `Authorization: Bearer` header, and the SignalR connection takes it as an
+`access_token` query parameter — because a WebSocket handshake cannot carry a custom header.
+
+## Live, not polled
+
+```mermaid
+sequenceDiagram
+    participant A as RetroAdmin
+    participant API as Management API
+    participant L as LiveDataService
+
+    A->>API: login, get a token
+    A->>API: open the SignalR hub with the token
+    API-->>A: connected
+    loop as things happen
+        L->>API: status, TNFS and Econet statistics
+        API-->>A: pushed
+        A-->>A: redraw - no polling
+    end
+```
+
+> **First-launch caveat:** headless tests cannot catch compiled-binding errors or a missing `avares://` resource.
+> Watch for those on the first window after a change — they appear at runtime and nowhere else.
+
+## Related
+
+- [`RetroServer`](../RetroServer.Service/README.md) — the server this administers.
+- `RetroIO.Management.Client` (`RetroIO/src/RetroIO.Management.Client/README.md`) — the typed client it
+  uses.
+- `RetroIO.Management.Contracts` (`RetroIO/src/RetroIO.Management.Contracts/README.md`) — the DTOs, which
+  depend on nothing, so this app does not ship the protocol stack.
+- Tests: `tests/RetroAdmin.Desktop.Tests`.
+
+---
+
+## The detailed feature reference
+
+RetroAdmin is an AvaloniaUI-based graphical user interface for managing the RetroFS server. It provides a
+comprehensive dashboard for monitoring, configuring, and administering all aspects of the server.
 
 ## Features
 
