@@ -33,7 +33,7 @@ increments, which is the only way the number reported is the number that happene
 | # | Requirement | Why | How to check |
 |---|---|---|---|
 | P1 | .NET SDK as pinned in `global.json`, or the published exe | To build or run | `dotnet --info` |
-| P2 | RetroIO packed to the local feed | Restore | `dir E:\Dev\RCL\localfeed` |
+| P2 | RetroIO packed to the local feed | Restore | `dir ..\localfeed` |
 | P3 | **UDP 16384 free** | TNFS | `netstat -ano \| findstr 16384` |
 | P4 | A free UDP port for AUN | Econet | |
 | P5 | Free HTTP port(s) for the API | `RetroAdmin`, Swagger | The defaults are printed at start-up |

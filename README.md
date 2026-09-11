@@ -30,7 +30,7 @@ NuGet packages. This repository is the **hosting** and the **administration**.
 |---|---|---|---|
 | P1 | .NET SDK as pinned in `global.json` | Everything | `dotnet --info` |
 | P2 | PowerShell 7+ | `build.ps1` | `$PSVersionTable.PSVersion` |
-| P3 | **RetroIO packed to `E:\Dev\RCL\localfeed`** | Restore | `dir E:\Dev\RCL\localfeed` |
+| P3 | **RetroIO packed to the local feed** (`../localfeed`, beside the repositories) | Restore | `dir ..\localfeed` |
 | P4 | `.\build.ps1` run | Testing the published exes | `dir publish\win-x64\*.exe` |
 | P5 | A free UDP 16384 (TNFS) and UDP port for AUN | Serving | `netstat -ano \| findstr 16384` |
 | P6 | A free HTTP port for the management API | `RetroAdmin`, Swagger | Default URLs are printed at start-up |
@@ -39,7 +39,7 @@ NuGet packages. This repository is the **hosting** and the **administration**.
 | P9 | **A real 8-bit machine or an emulator** | An end-to-end test | FujiNet, a BBC Micro, or BeebEm |
 
 ```powershell
-cd E:\Dev\RCL\RetroServer
+# from the repository root
 .\build.ps1                          # build, test, publish both apps
 publish\win-x64\RetroServer.exe      # run the server
 ```
@@ -155,12 +155,12 @@ TNFS has no such gap: `tnfs-stress` (`RetroIO/tools/RetroIO.Tools.TnfsStress/REA
 The protocols and the storage are tested in RetroIO. A protocol bug found here should become a test **there** —
 this repository hosts and administers; it does not implement.
 
-Manual test procedures are in `E:\Dev\RCL\Migration\Manual tests - RetroServer.md`.
+Manual test procedures are in the migration notes, as `Manual tests - RetroServer.md`.
 
 ## Conventions
 
 - Names follow the workspace naming standard; diagrams follow the workspace Mermaid palette. Both live one level
-  up, **outside this repository**, so they are paths rather than links: `E:\Dev\RCL\NAMING.md` and
-  `E:\Dev\RCL\MERMAID_COLOR_STANDARDS.md`.
-- `python E:\Dev\RCL\eng\check-docs.py .` checks every link and diagram here.
+  up in the workspace root, **outside this repository**, so they are paths rather than links: `NAMING.md` and
+  `MERMAID_COLOR_STANDARDS.md`.
+- `python ../eng/check-docs.py .` checks every link and diagram here.
 - The org is **RetroCoreLabs**. `HackerCorpLabs` is retired.

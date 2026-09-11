@@ -39,7 +39,7 @@ one running locally.
 |---|---|---|---|
 | P1 | .NET SDK as pinned in `global.json`, or the published exe | To build or run | `dotnet --info` |
 | P2 | **A Windows desktop session** | It is an Avalonia GUI | Not usable over a plain SSH session |
-| P3 | RetroIO packed to the local feed | Restore | `dir E:\Dev\RCL\localfeed` |
+| P3 | RetroIO packed to the local feed | Restore | `dir ..\localfeed` |
 | P4 | **A reachable RetroServer management API** | Everything | The URL is printed when the server starts |
 | P5 | Credentials | Anything past probing | A RetroIDP user |
 | P6 | HTTPS if it is not local | The bearer token is a credential | |
@@ -244,13 +244,13 @@ RetroServeUI embeds the RetroFS server using the same configuration and services
 
 ### From Command Line
 ```powershell
-cd E:\Dev\Ronny\RetroFS\src\RetroServeUI
+cd src\RetroAdmin.Desktop
 dotnet run
 ```
 
 ### Building
 ```powershell
-cd E:\Dev\Ronny\RetroFS\src\RetroServeUI
+cd src\RetroAdmin.Desktop
 dotnet build
 ```
 
@@ -282,4 +282,4 @@ On first run, RetroServeUI will:
 
 ## Full Path
 
-This file is located at: `E:\Dev\Ronny\RetroFS\src\RetroServeUI\README.md`
+This file is `src/RetroAdmin.Desktop/README.md` in the RetroServer repository.
