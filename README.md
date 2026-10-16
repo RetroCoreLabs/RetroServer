@@ -7,7 +7,7 @@ storage RetroIO can mount, and a desktop app to administer it.
 [![release](https://img.shields.io/github/v/release/RetroCoreLabs/RetroServer)](https://github.com/RetroCoreLabs/RetroServer/releases)
 [![licence](https://img.shields.io/github/license/RetroCoreLabs/RetroServer)](LICENSE)
 [![downloads](https://img.shields.io/github/downloads/RetroCoreLabs/RetroServer/total)](https://github.com/RetroCoreLabs/RetroServer/releases)
-[Applications](#the-two-applications) Â· [Prerequisites](#prerequisites) Â· [How it fits together](#how-it-fits-together) Â· [About TNFS and Econet](#about-tnfs-and-econet)
+[Applications](#the-two-applications) · [Prerequisites](#prerequisites) · [How it fits together](#how-it-fits-together) · [About TNFS and Econet](#about-tnfs-and-econet)
 
 <!-- A 5-15 second recording: RetroServer starting, a real machine mounting a share, and
      RetroAdmin showing the session. Under 10 MB. Uncomment when the capture exists.
