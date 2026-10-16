@@ -112,7 +112,7 @@ sequenceDiagram
   uses.
 - `RetroIO.Management.Contracts` (`RetroIO/src/RetroIO.Management.Contracts/README.md`) — the DTOs, which
   depend on nothing, so this app does not ship the protocol stack.
-- Tests: `tests/RetroAdmin.Desktop.Tests`.
+- Tests: `src/tests/RetroAdmin.Desktop.Tests`.
 
 ---
 

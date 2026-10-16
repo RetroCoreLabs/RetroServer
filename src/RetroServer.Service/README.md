@@ -47,7 +47,7 @@ increments, which is the only way the number reported is the number that happene
 | P8 | `RETROFS_DATA_PATH` understood | It moves the data directory **and the image corpus** | `$env:RETROFS_DATA_PATH` |
 
 ```powershell
-publish\win-x64\RetroServer.exe                                          # console
+src\publish\win-x64\RetroServer.exe                                          # console
 RetroServer.exe --Management:Urls=http://localhost:5100;https://localhost:5101
 ```
 
@@ -150,5 +150,5 @@ user-creation step is a server nobody gets working.
   and disc composition this host uses.
 - `RetroIO.Management.Api` (`RetroIO/src/RetroIO.Management.Api/README.md`) — the API it exposes.
 - [`RetroAdmin`](../RetroAdmin.Desktop/README.md) — the desktop administration app.
-- `tnfs-stress` (`RetroIO/tools/RetroIO.Tools.TnfsStress/README.md`) — load-test the TNFS side. Note it
+- `tnfs-stress` (`RetroIO/src/tools/RetroIO.Tools.TnfsStress/README.md`) — load-test the TNFS side. Note it
   targets `localhost:16384` **hard-coded**.

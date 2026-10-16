@@ -13,6 +13,12 @@ storage RetroIO can mount, and a desktop app to administer it.
      RetroAdmin showing the session. Under 10 MB. Uncomment when the capture exists.
 ![RetroServer starting, a retro machine mounting a share over TNFS, and RetroAdmin showing the live session.](docs/images/readme/demo.gif)
 -->
+## How this code was written
+
+Some of the code in this repository was written with the help of AI, mostly Claude (Anthropic).
+Ronny Hansen directs the work, tests it against real hardware and emulators, and is responsible for
+what is in the repository. We say so plainly so you know what you are using.
+
 ## Why this repo exists
 
 An 8-bit machine with a network adapter — a FujiNet on an Atari, a Pi-based bridge on a BBC Micro — can reach files
@@ -51,10 +57,10 @@ No tagged release yet, so the release and download badges above are empty until 
 
 | # | Requirement | Needed for | How to check |
 |---|---|---|---|
-| P1 | .NET SDK as pinned in `global.json` | Everything | `dotnet --info` |
+| P1 | .NET SDK as pinned in `src/global.json` | Everything | `dotnet --info` |
 | P2 | PowerShell 7+ | `build.ps1` | `$PSVersionTable.PSVersion` |
 | P3 | **RetroIO packed to the local feed** (`../localfeed`, beside the repositories) | Restore | `dir ..\localfeed` |
-| P4 | `.\build.ps1` run | Testing the published exes | `dir publish\win-x64\*.exe` |
+| P4 | `.\src\build.ps1` run | Testing the published exes | `dir src\publish\win-x64\*.exe` |
 | P5 | A free UDP 16384 (TNFS) and UDP port for AUN | Serving | `netstat -ano \| findstr 16384` |
 | P6 | A free HTTP port for the management API | `RetroAdmin`, Swagger | Default URLs are printed at start-up |
 | P7 | Something to serve | Anything useful | A directory, or a disk image |
@@ -63,8 +69,8 @@ No tagged release yet, so the release and download badges above are empty until 
 
 ```powershell
 # from the repository root
-.\build.ps1                          # build, test, publish both apps
-publish\win-x64\RetroServer.exe      # run the server
+.\src\build.ps1                          # build, test, publish both apps
+src\publish\win-x64\RetroServer.exe      # run the server
 ```
 
 Until the RetroIO packages are on nuget.org they come from the local feed, so **a fresh CI run is red until the
@@ -164,7 +170,7 @@ and the ownership does not move. See
 testing it end to end needs a BBC Micro, a Master, or BeebEm. That is recorded the same way in the manual test
 documents, and a section that cannot be run must be marked **SKIPPED**, never passed.
 
-TNFS has no such gap: `tnfs-stress` (`RetroIO/tools/RetroIO.Tools.TnfsStress/README.md`) loads it hard, and
+TNFS has no such gap: `tnfs-stress` (`RetroIO/src/tools/RetroIO.Tools.TnfsStress/README.md`) loads it hard, and
 `RetroCommander` is a TNFS client.
 
 ---
@@ -173,7 +179,7 @@ TNFS has no such gap: `tnfs-stress` (`RetroIO/tools/RetroIO.Tools.TnfsStress/REA
 
 | Project | Covers |
 |---|---|
-| `tests/RetroAdmin.Desktop.Tests` | The admin app |
+| `src/tests/RetroAdmin.Desktop.Tests` | The admin app |
 
 The protocols and the storage are tested in RetroIO. A protocol bug found here should become a test **there** —
 this repository hosts and administers; it does not implement.
@@ -202,14 +208,14 @@ machines are still around, still work, and still expect a server to be there.
 - Names follow the workspace naming standard; diagrams follow the workspace Mermaid palette. Both live one level
   up in the workspace root, **outside this repository**, so they are paths rather than links: `NAMING.md` and
   `MERMAID_COLOR_STANDARDS.md`.
-- `python eng/check-docs.py` checks every link and diagram here.
+- `python src/eng/check-docs.py` checks every link and diagram here.
 - The org is **RetroCoreLabs**. `HackerCorpLabs` is retired.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get a build running, what the code is
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for how to get a build running, what the code is
 expected to look like, and what will get a change sent back. A security problem goes through
-[SECURITY.md](SECURITY.md) and never a public issue.
+[SECURITY.md](.github/SECURITY.md) and never a public issue.
 
 ## Licence
 

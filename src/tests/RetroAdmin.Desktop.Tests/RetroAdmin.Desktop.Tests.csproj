@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RetroAdmin.Desktop\RetroAdmin.Desktop.csproj" />
+    <ProjectReference Include="..\..\RetroAdmin.Desktop\RetroAdmin.Desktop.csproj" />
   </ItemGroup>
 
 </Project>
