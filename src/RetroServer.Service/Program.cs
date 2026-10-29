@@ -174,13 +174,15 @@ public class Program
     /// Writes the usage text.
     /// </summary>
     /// <remarks>
-    /// Every switch listed here is one the server really reads. The Tnfs: and Econet: keys are the
-    /// exact set honoured by ProtocolConfigurationLoader.ApplyTnfsOverrides and
-    /// ApplyEconetOverrides -- if a key is added there, add it here too, or the help lies.
+    /// Every switch listed here is one the server really reads. The Tnfs:, Econet: and DriveWire:
+    /// keys are the exact set honoured by ProtocolConfigurationLoader.ApplyTnfsOverrides,
+    /// ApplyEconetOverrides and ApplyDriveWireOverrides -- if a key is added there, add it here
+    /// too, or the help lies. Unlike the other two, the DriveWire keys are not written back:
+    /// drivewire-config.json is written only when it does not exist yet.
     /// </remarks>
     private static void PrintHelp()
     {
-        Console.WriteLine("RetroServer -- TNFS and Econet file server for retro computers.");
+        Console.WriteLine("RetroServer -- TNFS, Econet and DriveWire server for retro computers.");
         Console.WriteLine();
         Console.WriteLine("USAGE");
         Console.WriteLine("  RetroServer [options]");
@@ -199,6 +201,16 @@ public class Program
         Console.WriteLine("  --Econet:RootDirectory=<path>   Directory served over Econet.");
         Console.WriteLine("  --Econet:UdpPort=<port>         Econet AUN UDP port.         (default 32768)");
         Console.WriteLine();
+        Console.WriteLine("  DriveWire (CoCo and Dragon disks over TCP, as an emulator's Becker port connects).");
+        Console.WriteLine("  Read from drivewire-config.json; these override it for this run only (the file");
+        Console.WriteLine("  is written only when it does not exist yet).");
+        Console.WriteLine("  --DriveWire:Enabled=<true|false>                   Run the DriveWire server. (default true)");
+        Console.WriteLine("  --DriveWire:Port=<port>                            TCP port.            (default 65504)");
+        Console.WriteLine("  --DriveWire:BindAddress=<address>                  Address to listen on. (default 127.0.0.1)");
+        Console.WriteLine("  --DriveWire:TransactionTimeoutMilliseconds=<ms>    Byte time limit inside one request. (default 250)");
+        Console.WriteLine("  --DriveWire:Drives:<n>:Path=<image>                Disk image served as drive n (0-255).");
+        Console.WriteLine("  --DriveWire:Drives:<n>:ReadOnly=<true|false>       Refuse writes to drive n. (default false)");
+        Console.WriteLine();
         Console.WriteLine("ENVIRONMENT");
         Console.WriteLine($"  {PathHelper.DataPathEnvironmentVariable,-30}  Overrides the data directory holding the");
         Console.WriteLine($"  {string.Empty,-30}  configuration, identity store and logs.");
@@ -210,5 +222,6 @@ public class Program
         Console.WriteLine("  RetroServer");
         Console.WriteLine("  RetroServer --Tnfs:UdpPort=16385 --Tnfs:RootDirectory=D:\\disks");
         Console.WriteLine("  RetroServer --Econet:UdpPort=32768");
+        Console.WriteLine("  RetroServer --DriveWire:Drives:0:Path=D:\\disks\\NOS9_6809_L1_v030300_coco1_becker.dsk");
     }
 }
