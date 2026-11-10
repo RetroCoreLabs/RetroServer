@@ -27,6 +27,21 @@
         <DataTemplate DataType="vm:FirewallViewModel">
             <views:FirewallView />
         </DataTemplate>
+        <DataTemplate DataType="vm:DriveWireSettingsViewModel">
+            <views:DriveWireSettingsView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:XmsgNodeSettingsViewModel">
+            <views:XmsgNodeSettingsView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:SecuritySettingsViewModel">
+            <views:SecuritySettingsView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:MountsViewModel">
+            <views:MountsView />
+        </DataTemplate>
+        <DataTemplate DataType="vm:StartupSettingsViewModel">
+            <views:StartupSettingsView />
+        </DataTemplate>
         <DataTemplate DataType="vm:SettingsViewModel">
             <views:SettingsView />
         </DataTemplate>

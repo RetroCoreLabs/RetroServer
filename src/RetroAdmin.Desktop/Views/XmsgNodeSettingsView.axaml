@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             x:Class="RetroAdmin.Desktop.Views.XmsgNodeSettingsView"
+             x:DataType="vm:XmsgNodeSettingsViewModel">
+
+    <!-- Every key of xmsgnode-config.json: RetroServer as an XMSG machine of its own. Read at start. -->
+    <StackPanel Spacing="10">
+        <TextBlock Text="XMSG Node" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundAltBrush}" BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1" CornerRadius="4" Padding="12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="Settings (take effect when RetroServer restarts)" FontWeight="Bold" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <CheckBox Content="Run the node" IsChecked="{Binding Enabled}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <Grid ColumnDefinitions="200,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="Own system number" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SystemNumber}" Margin="0,2" ToolTip.Tip="RetroServer's number on the XMSG network, 1 to 65535."/>
+                    <TextBlock Grid.Row="1" Text="Peer system number" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PeerSystemNumber}" Margin="0,2" ToolTip.Tip="The one ND machine the node talks to."/>
+                    <TextBlock Grid.Row="2" Text="Ethernet segment" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Ethernet}" Watermark="tcp:127.0.0.1:5010" Margin="0,2" ToolTip.Tip="The hub to join."/>
+                    <TextBlock Grid.Row="3" Text="Program listen address" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ProgramBindAddress}" Margin="0,2" ToolTip.Tip="Where XMSG programs (chat and others) connect. 127.0.0.1 = this computer only."/>
+                    <TextBlock Grid.Row="4" Text="Program port" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ProgramPort}" Margin="0,2"/>
+                    <TextBlock Grid.Row="5" Text="Program token" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding TokenState}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="6" Text="New token" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding NewToken}" PasswordChar="*" Watermark="leave empty to keep the one set" Margin="0,2"/>
+                    <CheckBox Grid.Row="7" Grid.Column="1" Content="Remove the token" IsChecked="{Binding RemoveToken}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="8" Text="Program log level" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding LogLevels}" SelectedItem="{Binding ProgramLogMinimum}" Margin="0,2"
+                              ToolTip.Tip="Log lines sent by programs below this level are dropped."/>
+                    <TextBlock Grid.Row="9" Text="Login banner line" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Motd}" Watermark="empty = the built-in one" Margin="0,2"
+                             ToolTip.Tip="The middle line of the banner a SINTRAN user sees on CONNECT-TO this node."/>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Save" Command="{Binding SaveSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <Button Content="Reload" Command="{Binding LoadSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding SettingsMessage}" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

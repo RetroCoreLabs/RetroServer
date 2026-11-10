@@ -75,6 +75,42 @@
                             Margin="0,5"/>
 
                     <Button Classes="NavButton"
+                            Content="XMSG Hub"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="XmsgHub"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="XMSG Node"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="XmsgNode"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="DriveWire"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="DriveWire"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Limits and Audit"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Security"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Mounted Volumes"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Mounts"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
+                            Content="Start-up File"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Startup"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
                             Content="Volumes"
                             Command="{Binding NavigateCommand}"
                             CommandParameter="Volumes"

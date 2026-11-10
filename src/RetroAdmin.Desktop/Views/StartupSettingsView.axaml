@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             x:Class="RetroAdmin.Desktop.Views.StartupSettingsView"
+             x:DataType="vm:StartupSettingsViewModel">
+
+    <!-- RetroServer's appsettings.json. A save keeps every key this page does not show. -->
+    <StackPanel Spacing="10">
+        <TextBlock Text="Start-up File" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundAltBrush}" BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1" CornerRadius="4" Padding="12">
+            <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="200,*" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="File" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <SelectableTextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FilePath}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="1" Text="Data folder" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <SelectableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DataFolder}" Foreground="{DynamicResource RetroFSWhiteBrush}"
+                                         ToolTip.Tip="Set by the RETROFS_DATA_PATH environment variable, not by a file, so it is shown only."/>
+                </Grid>
+
+                <TextBlock Text="Log levels, one per line (category = Trace, Debug, Information, Warning, Error, Critical or None)"
+                           TextWrapping="Wrap" FontWeight="Bold" Margin="0,8,0,0" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <TextBox Text="{Binding LogLevels}" AcceptsReturn="True" Height="90" Watermark="Default = Information&#10;Microsoft = Warning"/>
+
+                <TextBlock Text="File storage" FontWeight="Bold" Margin="0,8,0,0" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <Grid ColumnDefinitions="200,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="Store files" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Backends}" SelectedItem="{Binding FileSystemBackend}" Margin="0,2"/>
+                    <TextBlock Grid.Row="1" Text="Azure connection string" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ConnectionStringState}" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="2" Text="New connection string" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NewConnectionString}" PasswordChar="*" Watermark="leave empty to keep the stored one" Margin="0,2"/>
+                    <CheckBox Grid.Row="3" Grid.Column="1" Content="Remove the stored connection string" IsChecked="{Binding RemoveConnectionString}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="4" Text="Azure container" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding AzureContainerName}" Margin="0,2"/>
+                    <CheckBox Grid.Row="5" Grid.Column="1" Content="Use this machine's own Azure identity instead of a connection string" IsChecked="{Binding AzureUseManagedIdentity}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="6" Text="Storage account address" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AzureStorageAccountUri}" Watermark="https://ACCOUNT.blob.core.windows.net" Margin="0,2"/>
+                    <CheckBox Grid.Row="7" Grid.Column="1" Content="Make the container when it is missing" IsChecked="{Binding AzureCreateContainerIfNotExists}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </Grid>
+
+                <TextBlock Text="Management addresses" FontWeight="Bold" Margin="0,8,0,0" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <TextBox Text="{Binding ManagementUrls}" Watermark="empty = http://localhost:5000;https://localhost:5001"
+                         ToolTip.Tip="Where RetroAdmin reaches the server, separated by ';'. A wrong address can lock RetroAdmin out after a restart."/>
+
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button Content="Save" Command="{Binding SaveSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <Button Content="Reload" Command="{Binding LoadSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding SettingsMessage}" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

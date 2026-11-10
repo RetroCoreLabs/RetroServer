@@ -5,10 +5,12 @@
 // RetroFS -- Accessing yesterday's data with today's standards
 //
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RetroIO.Management.Contracts;
+using RetroAdmin.Desktop.Services;
 using RetroAdmin.Desktop.Services.ServerControl;
 
 namespace RetroAdmin.Desktop.ViewModels;
@@ -25,6 +27,35 @@ public partial class SettingsViewModel : ViewModelBase
 {
     private readonly ManagementConnection _connection;
 
+    /// <summary>The two Econet reply formats.</summary>
+    public IReadOnlyList<string> WireProfiles { get; } = new[] { "LaterFS", "Classic1983" };
+
+    // The on/off switches in tnfs-config.json and econet-config.json (2026-11-10).
+
+    [ObservableProperty]
+    private bool _tnfsEnabled = true;
+
+    [ObservableProperty]
+    private bool _econetEnabled = true;
+
+    /// <summary>The server's version text the BBC sees; empty for none.</summary>
+    [ObservableProperty]
+    private string _econetVersionString = string.Empty;
+
+    [ObservableProperty]
+    private int _econetStationByte = 3;
+
+    [ObservableProperty]
+    private string _econetWireProfile = "LaterFS";
+
+    /// <summary>Machines with another reply format, one per line (see <see cref="SettingsLines"/>).</summary>
+    [ObservableProperty]
+    private string _econetWireOverrides = string.Empty;
+
+    /// <summary>Discs from their own storage, one per line (see <see cref="SettingsLines"/>).</summary>
+    [ObservableProperty]
+    private string _econetDiscs = string.Empty;
+
     [ObservableProperty]
     private string _tnfsRootDirectory = string.Empty;
 
@@ -39,6 +70,20 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _enableTcp = true;
+
+    // TNFS limits, in tnfs-config.json since 2026-11-10 (defaults are the reference daemon's).
+
+    [ObservableProperty]
+    private int _tnfsMaxTcpConnections = 4096;
+
+    [ObservableProperty]
+    private int _tnfsMaxSessions = 4096;
+
+    [ObservableProperty]
+    private int _tnfsMaxSessionsPerIp = 4096;
+
+    [ObservableProperty]
+    private int _tnfsSessionTimeoutSeconds = 600;
 
     [ObservableProperty]
     private string _econetRootDirectory = string.Empty;
@@ -88,11 +133,16 @@ public partial class SettingsViewModel : ViewModelBase
 
         if (tnfs is { Success: true, Data: not null })
         {
+            TnfsEnabled = tnfs.Data.Enabled;
             TnfsRootDirectory = tnfs.Data.RootPath;
             UdpPort = tnfs.Data.UdpPort;
             TcpPort = tnfs.Data.TcpPort;
             EnableUdp = tnfs.Data.UdpEnabled;
             EnableTcp = tnfs.Data.TcpEnabled;
+            TnfsMaxTcpConnections = tnfs.Data.MaxConnections;
+            TnfsMaxSessions = tnfs.Data.MaxSessions;
+            TnfsMaxSessionsPerIp = tnfs.Data.MaxSessionsPerIP;
+            TnfsSessionTimeoutSeconds = tnfs.Data.SessionTimeoutSeconds;
         }
         else
         {
@@ -109,6 +159,12 @@ public partial class SettingsViewModel : ViewModelBase
             EconetNet = econet.Data.Net;
             EconetStation = econet.Data.Station;
             EconetEnableUdp = econet.Data.UdpEnabled;
+            EconetEnabled = econet.Data.Enabled;
+            EconetVersionString = econet.Data.VersionString ?? string.Empty;
+            EconetStationByte = econet.Data.AunStationOctetIndex;
+            EconetWireProfile = econet.Data.WireProfile;
+            EconetWireOverrides = SettingsLines.FormatOverrides(econet.Data.WireProfileOverrides);
+            EconetDiscs = SettingsLines.FormatDiscs(econet.Data.Discs);
         }
         else
         {
@@ -127,14 +183,29 @@ public partial class SettingsViewModel : ViewModelBase
             return;
         }
 
+        // Read the two list boxes before anything is sent, so a typing mistake saves nothing.
+        List<EconetWireProfileOverrideDto> overrides = new List<EconetWireProfileOverrideDto>();
+        List<EconetDiscDto> discs = new List<EconetDiscDto>();
+        string? problem = SettingsLines.ParseOverrides(EconetWireOverrides, overrides) ?? SettingsLines.ParseDiscs(EconetDiscs, discs);
+        if (problem != null)
+        {
+            StatusMessage = problem;
+            return;
+        }
+
         ApiResponse<TnfsSettingsDto>? tnfs = await _connection.Api.UpdateTnfsSettingsAsync(
             new UpdateTnfsSettingsRequest
             {
+                Enabled = TnfsEnabled,
                 RootPath = TnfsRootDirectory,
                 UdpPort = UdpPort,
                 TcpPort = TcpPort,
                 UdpEnabled = EnableUdp,
-                TcpEnabled = EnableTcp
+                TcpEnabled = EnableTcp,
+                MaxConnections = TnfsMaxTcpConnections,
+                MaxSessions = TnfsMaxSessions,
+                MaxSessionsPerIP = TnfsMaxSessionsPerIp,
+                SessionTimeoutSeconds = TnfsSessionTimeoutSeconds
             });
 
         if (tnfs is not { Success: true })
@@ -151,7 +222,14 @@ public partial class SettingsViewModel : ViewModelBase
                 UdpPort = EconetUdpPort,
                 Net = (byte)EconetNet,
                 Station = (byte)EconetStation,
-                UdpEnabled = EconetEnableUdp
+                UdpEnabled = EconetEnableUdp,
+                Enabled = EconetEnabled,
+                // Empty text is sent as empty (not null, which would mean "keep").
+                VersionString = EconetVersionString,
+                AunStationOctetIndex = (byte)EconetStationByte,
+                WireProfile = EconetWireProfile,
+                WireProfileOverrides = overrides,
+                Discs = discs
             });
 
         if (econet is not { Success: true })

@@ -27,6 +27,8 @@ public class ClientDependencyTests
     {
         "RetroIO.Protocols.Tnfs",
         "RetroIO.Protocols.Econet",
+        "RetroIO.Protocols.DriveWire",
+        "RetroIO.Protocols.Xmsg.Hub",
         "RetroIO.Server.Hosting",
         "RetroIO.Server.Core",
         "RetroIO.Identity",

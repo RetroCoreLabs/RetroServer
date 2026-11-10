@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             x:Class="RetroAdmin.Desktop.Views.SecuritySettingsView"
+             x:DataType="vm:SecuritySettingsViewModel">
+
+    <!-- Every key of security-config.json: traffic limits and the audit log. Read at start. -->
+    <StackPanel Spacing="10">
+        <TextBlock Text="Limits and Audit" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundAltBrush}" BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1" CornerRadius="4" Padding="12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="Traffic limits (take effect when RetroServer restarts; an empty box means no limit)" FontWeight="Bold"
+                           TextWrapping="Wrap" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <Grid ColumnDefinitions="260,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="Requests per second, one user" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PerUserRequestsPerSecond}" Margin="0,2"/>
+                    <TextBlock Grid.Row="1" Text="Megabytes per hour, one user" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PerUserMegabytesPerHour}" Margin="0,2"/>
+                    <CheckBox Grid.Row="2" Grid.Column="1" Content="Administrators are not limited" IsChecked="{Binding SkipLimitsForAdmins}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <TextBlock Grid.Row="3" Text="Requests per second, one address" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PerIpRequestsPerSecond}" Margin="0,2"/>
+                    <TextBlock Grid.Row="4" Text="Megabytes per hour, one address" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding PerIpMegabytesPerHour}" Margin="0,2"/>
+                    <TextBlock Grid.Row="5" Text="Requests per second, whole server" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ServerRequestsPerSecond}" Margin="0,2"/>
+                    <TextBlock Grid.Row="6" Text="Megabytes per hour, whole server" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding ServerMegabytesPerHour}" Margin="0,2"/>
+                </Grid>
+                <Grid ColumnDefinitions="260,*" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="Save the counters every (s)" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding RateLimitSaveIntervalSeconds}" Margin="0,2"/>
+                    <CheckBox Grid.Row="1" Grid.Column="1" Content="Keep the counters over a restart" IsChecked="{Binding RestoreRateLimitStateOnStartup}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </Grid>
+
+                <TextBlock Text="Audit log (the audit-logs folder in the data folder)" FontWeight="Bold" Margin="0,8,0,0" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <Grid ColumnDefinitions="260,*" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" Text="Entries held before writing" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding AuditBatchSize}" Margin="0,2"/>
+                    <TextBlock Grid.Row="1" Text="Write at least every (s)" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AuditFlushIntervalSeconds}" Margin="0,2"/>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Save" Command="{Binding SaveSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <Button Content="Reload" Command="{Binding LoadSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding SettingsMessage}" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

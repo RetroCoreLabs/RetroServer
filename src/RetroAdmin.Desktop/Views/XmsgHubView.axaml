@@ -1,0 +1,139 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="800"
+             x:Class="RetroAdmin.Desktop.Views.XmsgHubView"
+             x:DataType="vm:XmsgHubViewModel">
+
+    <!-- The XMSG Ethernet hub: the virtual Ethernet segment ND machines join over TCP.
+         Top: state and settings. Middle: members and the hub's own log. Bottom: the frames it carried. -->
+    <Grid RowDefinitions="Auto,Auto,Auto,*" VerticalAlignment="Stretch">
+
+        <TextBlock Grid.Row="0" Text="XMSG Ethernet Hub" FontSize="24" FontWeight="Bold"
+                   Foreground="{DynamicResource RetroFSGreenBrush}" Margin="0,0,0,10"/>
+
+        <!-- State and settings -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="0,0,0,10">
+            <Border Grid.Column="0" Background="{DynamicResource RetroFSBackgroundAltBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="12" Margin="0,0,10,0">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="State" FontWeight="Bold" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                    <TextBlock Foreground="{DynamicResource RetroFSWhiteBrush}">
+                        <Run Text="{Binding State}" FontWeight="Bold"/>
+                        <Run Text="  "/>
+                        <Run Text="{Binding Listening}"/>
+                        <Run Text="  "/>
+                        <Run Text="{Binding Uptime}"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding FailureReason}" TextWrapping="Wrap"
+                               Foreground="{DynamicResource RetroFSOrangeBrush}"
+                               IsVisible="{Binding FailureReason, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    <TextBlock Text="{Binding Counters}" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <SelectableTextBlock Text="{Binding JoinHint}" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Background="{DynamicResource RetroFSBackgroundAltBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="12">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Settings (take effect when RetroServer restarts)" FontWeight="Bold"
+                               Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                    <CheckBox Content="Run the hub" IsChecked="{Binding Enabled}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <Grid ColumnDefinitions="170,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" >
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="TCP port" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Port}" Margin="0,2" ToolTip.Tip="Machines join on this port. 5010 is what every setup note uses."/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Listen address" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BindAddress}" Margin="0,2" ToolTip.Tip="127.0.0.1 = this computer only. 0.0.0.0 = machines on other computers may join."/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Join another hub" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Uplink}" Watermark="host:port, or empty" Margin="0,2"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Capture file (pcap)" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding CaptureFile}" Watermark="a file on the server, or empty" Margin="0,2" ToolTip.Tip="Every frame is stored here. The file is replaced each time the hub starts."/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Frames kept" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding FrameBufferSize}" Margin="0,2" ToolTip.Tip="How many recent frames the server keeps for the list below."/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Log lines kept" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding LogBufferSize}" Margin="0,2"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Status line every (s)" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding StatusIntervalSeconds}" Margin="0,2" ToolTip.Tip="A status line is written only when a number in it changed."/>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="Save" Command="{Binding SaveSettingsCommand}"
+                                Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        <Button Content="Reload" Command="{Binding LoadSettingsCommand}"
+                                Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding SettingsMessage}" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Members and log -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" Height="220" Margin="0,0,0,10">
+            <DataGrid Grid.Column="0" ItemsSource="{Binding Members}" AutoGenerateColumns="False" IsReadOnly="True"
+                      Margin="0,0,10,0" Background="{DynamicResource RetroFSBackgroundBrush}"
+                      Foreground="{DynamicResource RetroFSWhiteBrush}" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Member" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="Kind" Binding="{Binding Kind}" Width="80"/>
+                    <DataGridTextColumn Header="Sent" Binding="{Binding FramesFromMember}" Width="70"/>
+                    <DataGridTextColumn Header="Received" Binding="{Binding FramesToMember}" Width="85"/>
+                    <DataGridTextColumn Header="Lost" Binding="{Binding FramesDropped}" Width="60"/>
+                    <DataGridTextColumn Header="Queued" Binding="{Binding QueueLength}" Width="70"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <DataGrid Grid.Column="1" ItemsSource="{Binding LogLines}" AutoGenerateColumns="False" IsReadOnly="True"
+                      Background="{DynamicResource RetroFSBackgroundBrush}"
+                      Foreground="{DynamicResource RetroFSWhiteBrush}" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Time" Binding="{Binding Time, StringFormat='{}{0:HH:mm:ss}'}" Width="80"/>
+                    <DataGridTextColumn Header="Hub log" Binding="{Binding Message}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- Frames -->
+        <Grid Grid.Row="3" RowDefinitions="Auto,*,Auto,Auto" ColumnDefinitions="*,380">
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+                <TextBlock Text="Frames (each once, as sent to the hub)" FontWeight="Bold" VerticalAlignment="Center"
+                           Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <TextBox Text="{Binding SystemFilter}" Watermark="system number" Width="130"/>
+                <Button Content="Filter" Command="{Binding ApplyFilterCommand}"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <CheckBox Content="Pause" IsChecked="{Binding Paused}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <Button Content="Clear list" Command="{Binding ClearFramesCommand}"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <Button Content="Save as pcap..." Click="OnSavePcap"
+                        Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+            </StackPanel>
+
+            <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}"
+                      AutoGenerateColumns="False" IsReadOnly="True" Margin="0,0,10,0"
+                      Background="{DynamicResource RetroFSBackgroundBrush}"
+                      Foreground="{DynamicResource RetroFSWhiteBrush}" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding Sequence}" Width="70"/>
+                    <DataGridTextColumn Header="Time" Binding="{Binding Time, StringFormat='{}{0:HH:mm:ss.fff}'}" Width="100"/>
+                    <DataGridTextColumn Header="System" Binding="{Binding Route}" Width="110"/>
+                    <DataGridTextColumn Header="Bytes" Binding="{Binding Length}" Width="60"/>
+                    <DataGridTextColumn Header="Hub" Binding="{Binding Outcome}" Width="110"/>
+                    <DataGridTextColumn Header="From member" Binding="{Binding Member}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource RetroFSBackgroundAltBrush}"
+                    BorderBrush="{DynamicResource RetroFSBorderBrush}" BorderThickness="1" CornerRadius="4" Padding="8">
+                <ScrollViewer>
+                    <SelectableTextBlock Text="{Binding SelectedFrame.HexDump, FallbackValue='Select a frame to see its bytes.'}"
+                                         FontFamily="Consolas,Menlo,monospace" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </ScrollViewer>
+            </Border>
+
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding FrameMessage}" TextWrapping="Wrap" Margin="0,6,0,0"
+                       Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+        </Grid>
+    </Grid>
+</UserControl>

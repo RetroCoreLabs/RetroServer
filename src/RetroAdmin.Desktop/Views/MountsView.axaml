@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             x:Class="RetroAdmin.Desktop.Views.MountsView"
+             x:DataType="vm:MountsViewModel">
+
+    <!-- The whole of mounts.json: storage volumes that Econet discs can name with mount:ID. Read at start. -->
+    <StackPanel Spacing="10">
+        <TextBlock Text="Mounted Volumes" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource RetroFSGreenBrush}"/>
+
+        <Border Background="{DynamicResource RetroFSBackgroundAltBrush}" BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1" CornerRadius="4" Padding="12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="One volume per line (takes effect when RetroServer restarts)" FontWeight="Bold" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource RetroFSLightGrayBrush}"
+                           Text="id | storage kind | address | options. Options, separated by commas: read-only, fs=TYPE, user=NAME, password=SECRET. A stored password shows as password=(kept); leave it to keep the password, take it out to remove it. A password may not contain a comma or a '|'."/>
+                <TextBox Text="{Binding Mounts}" AcceptsReturn="True" Height="240"
+                         Watermark="work | tnfs | tnfs://host:16384/work | read-only&#10;games | native | /discs/games"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Save" Command="{Binding SaveSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <Button Content="Reload" Command="{Binding LoadSettingsCommand}"
+                            Background="{DynamicResource RetroFSBackgroundLightBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding SettingsMessage}" TextWrapping="Wrap" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

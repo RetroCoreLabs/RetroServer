@@ -13,9 +13,70 @@
                    FontWeight="Bold"
                    Foreground="{DynamicResource RetroFSGreenBrush}"/>
 
-        <CheckBox IsChecked="{Binding FirewallEnabled}"
-                  Content="Firewall Enabled"
-                  Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+        <TextBlock Text="{Binding Status}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+        <!-- Settings: every field of firewall-config.json except the rules -->
+        <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                BorderBrush="{DynamicResource RetroFSBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Settings"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <CheckBox IsChecked="{Binding FirewallEnabled}"
+                          Content="Firewall on (off: every address is let in)"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="An address no rule names is:" VerticalAlignment="Center"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding DefaultPolicy}" Width="110"
+                              Background="{DynamicResource RetroFSBackgroundBrush}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                </StackPanel>
+
+                <CheckBox IsChecked="{Binding AllowLocalhost}"
+                          Content="Always let in this computer (127.0.0.1, ::1)"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <CheckBox IsChecked="{Binding AllowPrivateNetworks}"
+                          Content="Always let in private networks (10.x, 172.16-31.x, 192.168.x)"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <Grid ColumnDefinitions="*,10,*,10,*">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="Always let in (one address per line)" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        <TextBox Text="{Binding AllowedAddresses}" AcceptsReturn="True" Height="90"
+                                 Background="{DynamicResource RetroFSBackgroundBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Spacing="4">
+                        <TextBlock Text="Always refuse (one address per line)" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        <TextBox Text="{Binding BlockedAddresses}" AcceptsReturn="True" Height="90"
+                                 Background="{DynamicResource RetroFSBackgroundBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="4" Spacing="4">
+                        <TextBlock Text="Networks always let in (e.g. 192.168.1.0/24)" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        <TextBox Text="{Binding AllowedNetworks}" AcceptsReturn="True" Height="90"
+                                 Background="{DynamicResource RetroFSBackgroundBrush}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Remember a decision for (seconds):" VerticalAlignment="Center"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <NumericUpDown Value="{Binding CacheTtlSeconds}" Minimum="0" Maximum="86400" Increment="10" Width="140"
+                                   FormatString="0"/>
+                </StackPanel>
+
+                <Button Content="Save settings"
+                        Command="{Binding SaveSettingsCommand}"
+                        Background="{DynamicResource RetroFSGreenBrush}"
+                        Foreground="{DynamicResource RetroFSBackgroundBrush}"/>
+            </StackPanel>
+        </Border>
 
         <!-- Add Rule -->
         <Border Background="{DynamicResource RetroFSBackgroundLightBrush}"
@@ -39,12 +100,18 @@
                          Background="{DynamicResource RetroFSBackgroundBrush}"
                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
 
-                <ComboBox SelectedItem="{Binding SelectedAction}"
+                <!-- ItemsSource of plain strings: SelectedItem then IS the text sent. With
+                     ComboBoxItem children it was the item object, so the choice never reached
+                     SelectedAction (2026-11-10). -->
+                <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding SelectedAction}"
                           Background="{DynamicResource RetroFSBackgroundBrush}"
-                          Foreground="{DynamicResource RetroFSWhiteBrush}">
-                    <ComboBoxItem Content="Allow"/>
-                    <ComboBoxItem Content="Deny"/>
-                </ComboBox>
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Priority (lower is tried first):" VerticalAlignment="Center"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <NumericUpDown Value="{Binding NewRulePriority}" Minimum="0" Maximum="100000" Width="140" FormatString="0"/>
+                </StackPanel>
 
                 <Button Content="Add Rule"
                         Command="{Binding AddRuleCommand}"
@@ -75,6 +142,8 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
                         <DataGridTextColumn Header="Pattern" Binding="{Binding IpPattern}" Width="*"/>
                         <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="100"/>
+                        <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="90"/>
+                        <DataGridCheckBoxColumn Header="On" Binding="{Binding Enabled}" Width="60"/>
                         <DataGridTemplateColumn Header="Actions" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

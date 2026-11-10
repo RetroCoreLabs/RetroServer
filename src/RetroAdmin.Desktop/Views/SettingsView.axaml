@@ -26,6 +26,10 @@
 
                 <TextBlock Text="Root Directory:"
                            Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <CheckBox IsChecked="{Binding TnfsEnabled}"
+                          Content="Run the TNFS server"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
                 <TextBox Text="{Binding TnfsRootDirectory}"
                          Background="{DynamicResource RetroFSBackgroundBrush}"
                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
@@ -53,6 +57,34 @@
                                Maximum="65535"
                                Background="{DynamicResource RetroFSBackgroundBrush}"
                                Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <TextBlock Text="Most TCP connections at once:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding TnfsMaxTcpConnections}"
+                               Minimum="1"
+                               Maximum="1000000"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <TextBlock Text="Most sessions at once:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding TnfsMaxSessions}"
+                               Minimum="1"
+                               Maximum="1000000"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <TextBlock Text="Most sessions from one address:"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding TnfsMaxSessionsPerIp}"
+                               Minimum="1"
+                               Maximum="1000000"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                <TextBlock Text="Drop an idle session after (seconds):"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding TnfsSessionTimeoutSeconds}"
+                               Minimum="1"
+                               Maximum="86400"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
             </StackPanel>
         </Border>
 
@@ -69,6 +101,10 @@
 
                 <TextBlock Text="Root Directory:"
                            Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <CheckBox IsChecked="{Binding EconetEnabled}"
+                          Content="Run the Econet file server"
+                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
                 <TextBox Text="{Binding EconetRootDirectory}"
                          Background="{DynamicResource RetroFSBackgroundBrush}"
                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
@@ -76,6 +112,12 @@
                 <TextBlock Text="Disc Name:"
                            Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
                 <TextBox Text="{Binding EconetDiscName}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Version text (what the BBC sees; empty for none):"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBox Text="{Binding EconetVersionString}"
                          Background="{DynamicResource RetroFSBackgroundBrush}"
                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
 
@@ -111,6 +153,42 @@
                                        Foreground="{DynamicResource RetroFSWhiteBrush}"/>
                     </StackPanel>
                 </Grid>
+
+                <TextBlock Text="Which byte of a client's IP address is its station number (0 to 3; 3 is the last):"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <NumericUpDown Value="{Binding EconetStationByte}"
+                               Minimum="0"
+                               Maximum="3"
+                               Background="{DynamicResource RetroFSBackgroundBrush}"
+                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Reply format (LaterFS for ANFS / DNFS 3.60, Classic1983 for the oldest clients):"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <ComboBox ItemsSource="{Binding WireProfiles}"
+                          SelectedItem="{Binding EconetWireProfile}"/>
+
+                <TextBlock Text="Machines with another reply format, one per line (network.station = format):"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBox Text="{Binding EconetWireOverrides}"
+                         AcceptsReturn="True"
+                         Height="70"
+                         Watermark="1.100 = Classic1983"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Discs from their own storage, one per line. Empty: every folder in the root is a disc."
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <TextBox Text="{Binding EconetDiscs}"
+                         AcceptsReturn="True"
+                         Height="90"
+                         Watermark="0 | Games | native:/discs/games&#10;1 | Work | mount:work-volume | read-only, folder=1Work"
+                         ToolTip.Tip="number | disc name | native:ADDRESS, tnfs:ADDRESS or mount:VOLUME-ID | options (read-only, folder=NAME)"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
             </StackPanel>
         </Border>
 

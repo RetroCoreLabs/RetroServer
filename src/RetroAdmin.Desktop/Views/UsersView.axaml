@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
+             xmlns:services="using:RetroAdmin.Desktop.Services"
              mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
              x:Class="RetroAdmin.Desktop.Views.UsersView"
              x:DataType="vm:UsersViewModel">
@@ -34,6 +35,31 @@
                          PasswordChar="*"
                          Background="{DynamicResource RetroFSBackgroundBrush}"
                          Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="Display name (empty = the username)"
+                         Text="{Binding NewDisplayName}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBox Watermark="E-mail (optional)"
+                         Text="{Binding NewEmail}"
+                         Background="{DynamicResource RetroFSBackgroundBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                <TextBlock Text="Groups" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                <ItemsControl ItemsSource="{Binding NewUserGroups}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="services:GroupChoice">
+                            <CheckBox Content="{Binding GroupName}" IsChecked="{Binding IsChecked}" Margin="0,0,16,0"
+                                      Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
                 <StackPanel Orientation="Horizontal" Spacing="20">
                     <CheckBox Content="Allow TNFS"
@@ -71,6 +97,8 @@
                           Height="220">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="120"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="120"/>
+                        <DataGridTextColumn Header="Active" Binding="{Binding IsActiveText}" Width="60"/>
                         <DataGridTextColumn Header="TNFS" Binding="{Binding AllowTnfsText}" Width="55"/>
                         <DataGridTextColumn Header="Econet" Binding="{Binding AllowEconetText}" Width="65"/>
                         <DataGridTextColumn Header="Last TNFS" Binding="{Binding LastLoginTnfsText}" Width="130"/>
@@ -102,6 +130,35 @@
                         <TextBlock Text="Edit selected user"
                                    FontWeight="Bold"
                                    Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                        <TextBox Watermark="Display name"
+                                 Text="{Binding EditDisplayName}"
+                                 Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                                 Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                        <TextBox Watermark="E-mail"
+                                 Text="{Binding EditEmail}"
+                                 Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                                 Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                        <CheckBox Content="Active (a user who is not active cannot log in)"
+                                  IsChecked="{Binding EditIsActive}"
+                                  Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+
+                        <TextBlock Text="Groups" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                        <ItemsControl ItemsSource="{Binding EditUserGroups}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="services:GroupChoice">
+                                    <CheckBox Content="{Binding GroupName}" IsChecked="{Binding IsChecked}" Margin="0,0,16,0"
+                                              Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
                         <StackPanel Orientation="Horizontal" Spacing="20">
                             <CheckBox Content="Allow TNFS"

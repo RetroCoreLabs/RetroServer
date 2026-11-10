@@ -131,6 +131,12 @@ public partial class MainWindowViewModel : ViewModelBase
             "Dashboard" => new DashboardViewModel(_connection),
             "TNFS" => new TnfsMonitorViewModel(_connection),
             "Econet" => new EconetMonitorViewModel(_connection),
+            "XmsgHub" => new XmsgHubViewModel(_connection),
+            "XmsgNode" => new XmsgNodeSettingsViewModel(_connection),
+            "DriveWire" => new DriveWireSettingsViewModel(_connection),
+            "Security" => new SecuritySettingsViewModel(_connection),
+            "Mounts" => new MountsViewModel(_connection),
+            "Startup" => new StartupSettingsViewModel(_connection),
             "Volumes" => new VolumesViewModel(_connection),
             "Users" => new UsersViewModel(_connection),
 

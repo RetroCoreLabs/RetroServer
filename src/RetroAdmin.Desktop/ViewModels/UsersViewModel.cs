@@ -25,6 +25,27 @@ public partial class UsersViewModel : ViewModelBase
     public ObservableCollection<UserInfo> Users { get; } = new();
     public ObservableCollection<GroupInfo> Groups { get; } = new();
 
+    /// <summary>The groups as tick boxes on the create form.</summary>
+    public ObservableCollection<GroupChoice> NewUserGroups { get; } = new();
+
+    /// <summary>The groups as tick boxes on the edit form, ticked for the selected user's groups.</summary>
+    public ObservableCollection<GroupChoice> EditUserGroups { get; } = new();
+
+    [ObservableProperty]
+    private string _newDisplayName = string.Empty;
+
+    [ObservableProperty]
+    private string _newEmail = string.Empty;
+
+    [ObservableProperty]
+    private string _editDisplayName = string.Empty;
+
+    [ObservableProperty]
+    private string _editEmail = string.Empty;
+
+    [ObservableProperty]
+    private bool _editIsActive = true;
+
     [ObservableProperty]
     private string _newUsername = string.Empty;
 
@@ -69,13 +90,21 @@ public partial class UsersViewModel : ViewModelBase
             EditAllowTnfs = true;
             EditAllowEconet = false;
             EditPassword = string.Empty;
+            EditDisplayName = string.Empty;
+            EditEmail = string.Empty;
+            EditIsActive = true;
         }
         else
         {
             EditAllowTnfs = value.AllowTnfs;
             EditAllowEconet = value.AllowEconet;
             EditPassword = string.Empty;
+            EditDisplayName = value.DisplayName;
+            EditEmail = value.Email;
+            EditIsActive = value.IsActive;
         }
+
+        TickGroups(EditUserGroups, value?.GroupIds ?? []);
 
         OnPropertyChanged(nameof(HasSelectedUser));
     }
@@ -149,13 +178,25 @@ public partial class UsersViewModel : ViewModelBase
             {
                 Username = NewUsername,
                 Password = NewPassword,
-                DisplayName = NewUsername,
-                Email = string.Empty
+                DisplayName = string.IsNullOrWhiteSpace(NewDisplayName) ? NewUsername : NewDisplayName,
+                Email = NewEmail,
+                GroupIds = GroupChoice.CheckedIds(NewUserGroups),
+                // Sent since 2026-11-10; before that the two boxes on the form went nowhere.
+                AllowTnfs = NewAllowTnfs,
+                AllowEconet = NewAllowEconet
             };
 
-            await _connection.Api.CreateUserAsync(request);
+            ApiResponse<UserDto>? created = await _connection.Api.CreateUserAsync(request);
+            if (created is not { Success: true })
+            {
+                LogUi("Warning", created?.Error?.Message ?? "Could not create the user.");
+                return;
+            }
 
             NewUsername = string.Empty;
+            NewDisplayName = string.Empty;
+            NewEmail = string.Empty;
+            TickGroups(NewUserGroups, []);
             NewPassword = string.Empty;
             NewAllowTnfs = true;
             NewAllowEconet = false;
@@ -181,9 +222,18 @@ public partial class UsersViewModel : ViewModelBase
             {
                 AllowTnfs = EditAllowTnfs,
                 AllowEconet = EditAllowEconet,
+                DisplayName = EditDisplayName,
+                Email = EditEmail,
+                IsActive = EditIsActive,
+                GroupIds = GroupChoice.CheckedIds(EditUserGroups),
             };
 
-            await _connection.Api.UpdateUserAsync(SelectedUser.UserId, request);
+            ApiResponse<UserDto>? updated = await _connection.Api.UpdateUserAsync(SelectedUser.UserId, request);
+            if (updated is not { Success: true })
+            {
+                LogUi("Warning", updated?.Error?.Message ?? "Could not save the user.");
+                return;
+            }
 
             if (!string.IsNullOrWhiteSpace(EditPassword))
                 await _connection.Api.ChangePasswordAsync(SelectedUser.UserId, EditPassword);
@@ -263,6 +313,16 @@ public partial class UsersViewModel : ViewModelBase
             for (int i = 0; i < groups.Count; i++)
                 Groups.Add(groups[i]);
 
+            NewUserGroups.Clear();
+            EditUserGroups.Clear();
+            for (int i = 0; i < groups.Count; i++)
+            {
+                NewUserGroups.Add(new GroupChoice { GroupId = groups[i].GroupId, GroupName = groups[i].GroupName });
+                EditUserGroups.Add(new GroupChoice { GroupId = groups[i].GroupId, GroupName = groups[i].GroupName });
+            }
+
+            TickGroups(EditUserGroups, SelectedUser?.GroupIds ?? []);
+
             if (selectedUserId != null)
             {
                 for (int i = 0; i < Users.Count; i++)
@@ -301,6 +361,10 @@ public partial class UsersViewModel : ViewModelBase
             UserId = userId,
             Username = username,
             Groups = groups,
+            GroupIds = user.GroupIds.ToArray(),
+            DisplayName = user.DisplayName,
+            Email = user.Email ?? string.Empty,
+            IsActive = user.IsActive,
             AllowTnfs = user.AllowTnfs,
             AllowEconet = user.AllowEconet,
             LastLoginAt = user.LastLoginAt,
@@ -308,4 +372,15 @@ public partial class UsersViewModel : ViewModelBase
             LastLoginEconetAt = user.LastLoginEconetAt,
             LastFailedLoginAt = user.LastFailedLoginAt,
         };
+
+    /// <summary>Ticks exactly the groups whose ids are given.</summary>
+    /// <param name="choices">The tick boxes.</param>
+    /// <param name="ids">The ids to tick.</param>
+    public static void TickGroups(System.Collections.Generic.IList<GroupChoice> choices, string[] ids)
+    {
+        for (int i = 0; i < choices.Count; i++)
+        {
+            choices[i].IsChecked = Array.IndexOf(ids, choices[i].GroupId) >= 0;
+        }
+    }
 }

@@ -174,22 +174,25 @@ public class Program
     /// Writes the usage text.
     /// </summary>
     /// <remarks>
-    /// Every switch listed here is one the server really reads. The Tnfs:, Econet: and DriveWire:
-    /// keys are the exact set honoured by ProtocolConfigurationLoader.ApplyTnfsOverrides,
-    /// ApplyEconetOverrides and ApplyDriveWireOverrides -- if a key is added there, add it here
-    /// too, or the help lies. Unlike the other two, the DriveWire keys are not written back:
-    /// drivewire-config.json is written only when it does not exist yet.
+    /// Every switch listed here is one the server really reads. The Tnfs:, Econet:, DriveWire: and
+    /// XmsgHub: keys are the exact set honoured by ProtocolConfigurationLoader.ApplyTnfsOverrides,
+    /// ApplyEconetOverrides, ApplyDriveWireOverrides and ApplyXmsgHubOverrides, and the XmsgNode: keys
+    /// those of ApplyXmsgNodeOverrides -- if a key is added
+    /// there, add it here too, or the help lies. No key is written back into an existing file: each
+    /// file is written only when it does not exist yet, and then with the keys given included. Until
+    /// 2026-11-10 this text said the Tnfs and Econet keys were written back; the loader never did that.
     /// </remarks>
     private static void PrintHelp()
     {
-        Console.WriteLine("RetroServer -- TNFS, Econet and DriveWire server for retro computers.");
+        Console.WriteLine("RetroServer -- TNFS, Econet, DriveWire and XMSG Ethernet hub server for retro computers.");
         Console.WriteLine();
         Console.WriteLine("USAGE");
         Console.WriteLine("  RetroServer [options]");
         Console.WriteLine();
         Console.WriteLine("  Run with no options to serve on the saved configuration. Settings are read");
-        Console.WriteLine("  from tnfs-config.json and econet-config.json in the data directory, and any");
-        Console.WriteLine("  option below overrides the saved value AND is written back to those files.");
+        Console.WriteLine("  from the *-config.json files in the data directory (RetroAdmin edits them).");
+        Console.WriteLine("  An option below overrides the saved value for this run only. It is written");
+        Console.WriteLine("  into a file only when that file does not exist yet and is made now.");
         Console.WriteLine();
         Console.WriteLine("OPTIONS");
         Console.WriteLine("  --help, -h, /?                  Show this text and exit.");
@@ -211,6 +214,31 @@ public class Program
         Console.WriteLine("  --DriveWire:Drives:<n>:Path=<image>                Disk image served as drive n (0-255).");
         Console.WriteLine("  --DriveWire:Drives:<n>:ReadOnly=<true|false>       Refuse writes to drive n. (default false)");
         Console.WriteLine();
+        Console.WriteLine("  XMSG Ethernet hub (a virtual Ethernet segment ND machines join over TCP, in RetroCore");
+        Console.WriteLine("  with: device add ETH 0 --net=tcp:HOST:PORT). Read from xmsghub-config.json; these");
+        Console.WriteLine("  override it for this run only (the file is written only when it does not exist yet).");
+        Console.WriteLine("  --XmsgHub:Enabled=<true|false>              Run the hub.                 (default false)");
+        Console.WriteLine("  --XmsgHub:Port=<port>                       TCP port machines join on.   (default 5010)");
+        Console.WriteLine("  --XmsgHub:BindAddress=<address>             Address to listen on.        (default 127.0.0.1)");
+        Console.WriteLine("  --XmsgHub:Uplink=<host:port>                Also join another hub.       (default none)");
+        Console.WriteLine("  --XmsgHub:CaptureFile=<file.pcap>           Store every frame in a pcap. (default none)");
+        Console.WriteLine("  --XmsgHub:FrameBufferSize=<n>               Recent frames kept for the admin UI. (default 4096)");
+        Console.WriteLine("  --XmsgHub:LogBufferSize=<n>                 Recent log lines kept.       (default 1000)");
+        Console.WriteLine("  --XmsgHub:StatusIntervalSeconds=<s>         Seconds between status lines. (default 10)");
+        Console.WriteLine();
+        Console.WriteLine("  XMSG node (RetroServer as an XMSG machine: it joins the hub, and client and server");
+        Console.WriteLine("  programs such as retro-chat and retro-chat-server connect to it). Read from");
+        Console.WriteLine("  xmsgnode-config.json; these override it for this run only.");
+        Console.WriteLine("  --XmsgNode:Enabled=<true|false>             Run the node.                (default false)");
+        Console.WriteLine("  --XmsgNode:SystemNumber=<n>                 RetroServer's system number. (required)");
+        Console.WriteLine("  --XmsgNode:PeerSystemNumber=<n>             The one machine it talks to. (required)");
+        Console.WriteLine("  --XmsgNode:Ethernet=<spec>                  Segment to join.             (default tcp:127.0.0.1:5010)");
+        Console.WriteLine("  --XmsgNode:ProgramBindAddress=<address>     Address programs connect to. (default 127.0.0.1)");
+        Console.WriteLine("  --XmsgNode:ProgramPort=<port>               Port programs connect to.    (default 5011)");
+        Console.WriteLine("  --XmsgNode:ProgramToken=<secret>            Secret programs must send.   (default none = insecure)");
+        Console.WriteLine("  --XmsgNode:ProgramLogMinimum=<level>        Lowest program log level kept. (default Information)");
+        Console.WriteLine("  --XmsgNode:Motd=<text>                      Middle line of the TAD login banner.");
+        Console.WriteLine();
         Console.WriteLine("ENVIRONMENT");
         Console.WriteLine($"  {PathHelper.DataPathEnvironmentVariable,-30}  Overrides the data directory holding the");
         Console.WriteLine($"  {string.Empty,-30}  configuration, identity store and logs.");
@@ -223,5 +251,7 @@ public class Program
         Console.WriteLine("  RetroServer --Tnfs:UdpPort=16385 --Tnfs:RootDirectory=D:\\disks");
         Console.WriteLine("  RetroServer --Econet:UdpPort=32768");
         Console.WriteLine("  RetroServer --DriveWire:Drives:0:Path=D:\\disks\\NOS9_6809_L1_v030300_coco1_becker.dsk");
+        Console.WriteLine("  RetroServer --XmsgHub:Enabled=true --XmsgHub:CaptureFile=run.pcap");
+        Console.WriteLine("  RetroServer --XmsgHub:Enabled=true --XmsgNode:Enabled=true --XmsgNode:SystemNumber=19998 --XmsgNode:PeerSystemNumber=102");
     }
 }
