@@ -131,8 +131,11 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 ### Phase 6 - COSMOS file server with per-user folders
 
 - [x] `IFaFileStore` from `FolderFileStore`; `FaServer` takes the interface.
-- [ ] Root on any storage, reusing the Econet disc resolution (`EconetVfsDiscs.cs`); check that TNFS gives a
-      seekable stream and what happens when it is down.
+- [x] The store can sit on any storage backend (`FolderFileStore(IFileSystemBackend, root, location)`). Checked by
+      reading the code: TNFS files are copied to a local temporary file on open, so offset reads and writes work;
+      a file over the copy limit cannot be opened.
+- [ ] Config and start-up: provider + URI or `MountRef`, resolved as Econet discs do (`EconetVfsDiscs.cs`); what
+      happens when the TNFS endpoint is down at start.
 - [ ] USER from each request -> `<root>/<USER>/`, name checks, no path escape, the real user in the directory walk.
       A user with no folder gets "no such user"; the server makes no folders (Ronny can overrule).
 - [ ] Password word checked against RetroServer users, with the "WRONG PASSWORD" status.
