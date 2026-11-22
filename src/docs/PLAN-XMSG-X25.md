@@ -129,16 +129,13 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 
 ### Phase 6 - COSMOS file server with per-user folders
 
-- [x] `IFaFileStore` from `FolderFileStore`; `FaServer` takes the interface.
-- [x] The store can sit on any storage backend (`FolderFileStore(IFileSystemBackend, root, location)`). Checked by
-      reading the code: TNFS files are copied to a local temporary file on open, so offset reads and writes work;
-      a file over the copy limit cannot be opened.
-- [ ] Config and start-up: provider + URI or `MountRef`, resolved as Econet discs do (`EconetVfsDiscs.cs`); what
-      happens when the TNFS endpoint is down at start.
+- [ ] Live check: RetroServer serving a folder to D100 (`@LIST-FILES`), then a TNFS server. The settings
+      (`FileServerEnabled`, `FileServerProvider`, `FileServerUri`, `FileServerMountRef` in xmsgnode-config.json,
+      the API and the RetroAdmin XMSG node page) are built; a TNFS server that cannot be reached at start is
+      reported and the node runs without the file server. A TNFS file over the 16 MB copy limit cannot be opened.
 - [ ] USER from each request -> `<root>/<USER>/`, name checks, no path escape, the real user in the directory walk.
       A user with no folder gets "no such user"; the server makes no folders (Ronny can overrule).
 - [ ] Password word checked against RetroServer users, with the "WRONG PASSWORD" status.
-- [ ] Switched off = server not registered, so the ND gets "no such server".
 
 ### Phase 7 - console, connect-to gateway and the SINTRAN terminal
 

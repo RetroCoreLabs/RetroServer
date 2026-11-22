@@ -22,6 +22,9 @@ public partial class XmsgNodeSettingsViewModel : ViewModelBase
 {
     private readonly ManagementConnection _connection;
 
+    /// <summary>The kinds of storage the file server can serve from (the same list the server checks against).</summary>
+    public IReadOnlyList<string> FileServerProviders { get; } = new[] { "native", "tnfs" };
+
     /// <summary>The levels a program log line can be kept from (the same list the server checks against).</summary>
     public IReadOnlyList<string> LogLevels { get; } = new[] { "Trace", "Debug", "Information", "Warning", "Error", "Critical", "None" };
 
@@ -59,6 +62,22 @@ public partial class XmsgNodeSettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _motd = string.Empty;
+
+    /// <summary>Ticked: the node serves files as the COSMOS file server (*FA-SERVER).</summary>
+    [ObservableProperty]
+    private bool _fileServerEnabled;
+
+    /// <summary>The kind of storage: native (a folder on the server machine) or tnfs.</summary>
+    [ObservableProperty]
+    private string _fileServerProvider = "native";
+
+    /// <summary>Where the files are: a folder, or tnfs://host:port/path.</summary>
+    [ObservableProperty]
+    private string _fileServerUri = string.Empty;
+
+    /// <summary>A mounts.json volume to serve instead; filled in, the kind and place above are not sent.</summary>
+    [ObservableProperty]
+    private string _fileServerMountRef = string.Empty;
 
     [ObservableProperty]
     private string _settingsMessage = string.Empty;
@@ -116,6 +135,11 @@ public partial class XmsgNodeSettingsViewModel : ViewModelBase
             NewProgramToken = RemoveToken ? string.Empty : (NewToken.Length == 0 ? null : NewToken),
             ProgramLogMinimum = ProgramLogMinimum,
             Motd = string.IsNullOrWhiteSpace(Motd) ? null : Motd,
+            FileServerEnabled = FileServerEnabled,
+            // A mount reference replaces the inline kind and place; the server refuses both at once.
+            FileServerMountRef = string.IsNullOrWhiteSpace(FileServerMountRef) ? null : FileServerMountRef.Trim(),
+            FileServerProvider = string.IsNullOrWhiteSpace(FileServerMountRef) && !string.IsNullOrWhiteSpace(FileServerUri) ? FileServerProvider : null,
+            FileServerUri = string.IsNullOrWhiteSpace(FileServerMountRef) && !string.IsNullOrWhiteSpace(FileServerUri) ? FileServerUri.Trim() : null,
         });
 
         if (response is not { Success: true, Data: not null })
@@ -143,5 +167,9 @@ public partial class XmsgNodeSettingsViewModel : ViewModelBase
         RemoveToken = false;
         ProgramLogMinimum = s.ProgramLogMinimum;
         Motd = s.Motd ?? string.Empty;
+        FileServerEnabled = s.FileServerEnabled;
+        FileServerProvider = s.FileServerProvider ?? "native";
+        FileServerUri = s.FileServerUri ?? string.Empty;
+        FileServerMountRef = s.FileServerMountRef ?? string.Empty;
     }
 }

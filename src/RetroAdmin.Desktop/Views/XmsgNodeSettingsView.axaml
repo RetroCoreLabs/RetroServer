@@ -13,7 +13,7 @@
             <StackPanel Spacing="6">
                 <TextBlock Text="Settings (take effect when RetroServer restarts)" FontWeight="Bold" Foreground="{DynamicResource RetroFSOrangeBrush}"/>
                 <CheckBox Content="Run the node" IsChecked="{Binding Enabled}" Foreground="{DynamicResource RetroFSWhiteBrush}"/>
-                <Grid ColumnDefinitions="200,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                <Grid ColumnDefinitions="200,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                     <TextBlock Grid.Row="0" Text="Own system number" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
                     <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SystemNumber}" Margin="0,2" ToolTip.Tip="RetroServer's number on the XMSG network, 1 to 65535."/>
                     <TextBlock Grid.Row="1" Text="Peer system number" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
@@ -35,6 +35,18 @@
                     <TextBlock Grid.Row="9" Text="Login banner line" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
                     <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Motd}" Watermark="empty = the built-in one" Margin="0,2"
                              ToolTip.Tip="The middle line of the banner a SINTRAN user sees on CONNECT-TO this node."/>
+                    <TextBlock Grid.Row="10" Text="File server" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <CheckBox Grid.Row="10" Grid.Column="1" Content="Serve files as *FA-SERVER" IsChecked="{Binding FileServerEnabled}" Foreground="{DynamicResource RetroFSWhiteBrush}"
+                              ToolTip.Tip="The COSMOS file server SINTRAN's @LIST-FILES and @COPY-FILE talk to."/>
+                    <TextBlock Grid.Row="11" Text="File storage kind" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding FileServerProviders}" SelectedItem="{Binding FileServerProvider}" Margin="0,2"
+                              ToolTip.Tip="native: a folder on the server machine. tnfs: a TNFS server."/>
+                    <TextBlock Grid.Row="12" Text="Files are at" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding FileServerUri}" Watermark="a folder, or tnfs://host:16384/path" Margin="0,2"
+                             ToolTip.Tip="Where the served files are. Leave empty when a mount is named below."/>
+                    <TextBlock Grid.Row="13" Text="Or a mount" VerticalAlignment="Center" Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
+                    <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding FileServerMountRef}" Watermark="volume id from mounts.json" Margin="0,2"
+                             ToolTip.Tip="Serve a volume from the Mounts page instead. Filled in, the kind and place above are not used."/>
                 </Grid>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <Button Content="Save" Command="{Binding SaveSettingsCommand}"
