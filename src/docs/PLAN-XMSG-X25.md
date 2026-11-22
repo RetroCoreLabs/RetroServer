@@ -80,7 +80,6 @@ XMSG INIT first; the other machine then counts from 0. Our node now does the sam
 
 ### Phase 2 - clear out xmsgrunner
 
-- [ ] Delete the old message stack (`RunLegacyAsync`, `LiveNode`), in the runner and in RetroIO where unused.
 - [ ] Move the chat load test to the chat samples in RetroIO.
 - [ ] `retroserver-cli`: logs in like a user, runs commands one by one or from a script, through the management
       API. First commands: push / pull a file, send a batch job, link status, sync now.
