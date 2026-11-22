@@ -91,7 +91,7 @@ Every program comes as a set (server, client, manager), as on SINTRAN: the manag
 second named port `<NAME>-ADMIN`, and the port a message arrived on is the permission check.
 - [x] Command framework (SINTRAN abbreviations, described parameters, generated HELP, commas, no prompting for
       missing parameters) and the startup command file.
-- [ ] Settings file next to the program, defaults written on first run, flags override one run.
+- [x] Settings file next to the program, defaults written on first run (`ProgramSettingsFile`); flags stay per program.
 - [ ] Connection to RetroServer: address, token, features, reconnect after RetroServer restarts.
 - [ ] Logging to RetroServer and the console with the same categories; a log-level command.
 - [ ] Admin port: opens `<NAME>-ADMIN`, port check, STATUS / STOP / HELP for free.
