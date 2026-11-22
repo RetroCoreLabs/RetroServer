@@ -101,7 +101,7 @@ No modem answer side, no SLIP/PPP, no IP router or NAT exists in RetroIO or Retr
 - The NAT works on any subnet. For 10.42.0.0/24: `new NatEthernetBackend(new NatAddressPlan(0x0A2A0000, 0xFFFFFF00,
   0x0A2A0002, 0x0A2A0003, 0x0A2A000F, <locally administered MAC>), hostLoopback: true, nameServer: null,
   findHostNameServer: true)`; `RouterSettings` the same subnet, router 10.42.0.1, `UpstreamAddresses` 10.42.0.2 and
-  10.42.0.3, a pool that leaves those out. Packages in `E:\Dev\RCL\localfeed` (0.1.0-local.20261122222205).
+  10.42.0.3, a pool that leaves those out. Packages in the shared local package feed (0.1.0-local.20261122222205).
 - The dial-up session move is agreed: RetroIO moves `RetroCore.Network.DialUp`'s session into
   `RetroIO.Network.DialUp` (pluggable login check and packet side, tests kept, PPP later in the same package), after
   RetroCore switches to the RetroIO network packages. RetroIO sends a message when it is in the feed.
