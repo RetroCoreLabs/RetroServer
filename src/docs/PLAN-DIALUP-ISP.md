@@ -1,6 +1,6 @@
 # Plan: dial-up ISP in RetroServer (SLIP, then PPP)
 
-**Next:** wait for RetroIO to answer the reuse proposal (move RetroCore's dial-up session into RetroIO) and the NAT subnet question; then build the RetroServer dial-up listener on it.
+**Next:** wait for RetroIO's message that `RetroIO.Network.DialUp` is in the feed; then build the RetroServer dial-up listener on it, the router and the NAT (10.42.0.0/24).
 
 ## What Ronny decided (2026-11-22)
 
@@ -96,10 +96,15 @@ No modem answer side, no SLIP/PPP, no IP router or NAT exists in RetroIO or Retr
     `host:port` (Ronny). It does not have one today (checked 2026-11-22); that is RetroCore's change, asked of the
     RetroCore session.
 
-## Open with the RetroIO session
+## Answered by the RetroIO session (2026-11-22)
 
-- The moved NAT (RetroIO 9a68185) is set up on 10.0.2.0/24 (router 10.0.2.1, gateway 10.0.2.2, name server
-  10.0.2.3). The dial-up subnet is 10.42.0.0/24 (Ronny). Asked whether the NAT works on any subnet.
+- The NAT works on any subnet. For 10.42.0.0/24: `new NatEthernetBackend(new NatAddressPlan(0x0A2A0000, 0xFFFFFF00,
+  0x0A2A0002, 0x0A2A0003, 0x0A2A000F, <locally administered MAC>), hostLoopback: true, nameServer: null,
+  findHostNameServer: true)`; `RouterSettings` the same subnet, router 10.42.0.1, `UpstreamAddresses` 10.42.0.2 and
+  10.42.0.3, a pool that leaves those out. Packages in `E:\Dev\RCL\localfeed` (0.1.0-local.20261122222205).
+- The dial-up session move is agreed: RetroIO moves `RetroCore.Network.DialUp`'s session into
+  `RetroIO.Network.DialUp` (pluggable login check and packet side, tests kept, PPP later in the same package), after
+  RetroCore switches to the RetroIO network packages. RetroIO sends a message when it is in the feed.
 - RetroCore already has a dial-up ISP: `RetroCore.Network.DialUp` (`SlipDialUpService`, `SlipDialUpSession`, RetroCore
   d158dd68c), text login + SLIP + its own NAT per call. To keep one copy, proposed to RetroIO (2026-11-22): move the
   session into RetroIO with a pluggable login check and packet side (a router link); RetroCore's built-in ISP and
