@@ -1,6 +1,6 @@
 # Plan: dial-up ISP in RetroServer (SLIP, then PPP)
 
-**Next:** wait for the interface of `RetroIO.Network.Router` from the RetroIO session (agreed 2026-11-22); then build the RetroServer dial-up service on it and on `RetroIO.Protocols.Slip` (in the local feed as 0.1.0-local.20261122174953).
+**Next:** build step 1, RetroServer's own services over SLIP, on `RetroIO.Network.Router` (API settled) and `RetroIO.Protocols.Slip`. NAT (step 2) waits for RetroIO's message that the moved NAT is in.
 
 ## What Ronny decided (2026-11-22)
 
