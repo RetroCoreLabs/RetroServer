@@ -31,6 +31,15 @@ without saved counters (`NdLinkLayer.Reopen`; measured live against D100 on 2026
 - No login on 127.0.0.1; TLS and login only for connections from other machines.
 - Management commands live in the server; a manager only sends the typed text and prints what comes back.
 - Chat: complete C# server, trunks, CHAT-MON-style management, Terminal.Gui v2, then Avalonia.
+- Requirements for ALL of RetroServer, every protocol (Ronny, 2026-11-22):
+  - good statistics of what goes on in every protocol: live and shown in RetroAdmin;
+  - every protocol has an on/off switch, default OFF; an admin user turns it on;
+  - one user name and password across protocols wherever the protocol allows it; extend the user
+    profile with per-protocol details where needed;
+  - many clients at once, fast, high quality: no bugs, no memory leaks, modern C# with as few
+    allocations as possible (Span, ArrayPool, stackalloc, no LINQ);
+  - at the end, a deep security review of the whole server, with every hole found fixed.
+- RetroServer can also run as a Docker container, as an option beside the normal install (Ronny, 2026-11-22).
 
 ## Architecture
 
@@ -179,6 +188,11 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 - [ ] `RetroUser`: XMSG rights (file server, gateway, sync, console) and X.25 call; groups carry rights.
 - [ ] Make the default admin password `retroadmin` be changed (still unchanged on the lab machine 2026-11-21).
 - [ ] REST and RetroAdmin pages for users, groups and rights.
+- [ ] One login for all protocols: each protocol checks the same RetroServer user and password where it can
+      (XMSG file server, console, hub, dial-up PAP/CHAP, TNFS, Econet, AFP later); per-protocol details in
+      the user profile.
+- [ ] Statistics for every protocol: one common shape (connections, users, bytes, requests, errors, uptime),
+      pushed live to RetroAdmin. DriveWire and XMSG have none today.
 
 ### Phase 12 - X.25: routing, XOT, calls from the console
 
@@ -192,6 +206,32 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 
 - [ ] Remove `server-settings.json` and `api/v1/settings/server` (read by nothing).
 - [ ] Each phase adds its own pages; the two "every setting has a field" tests guard it.
+
+### Phase 14 - load, memory and security
+
+- [ ] Load test per protocol with many clients at once; measure speed and memory, and fix what it shows.
+- [ ] Memory: a long run under load with the memory measured at the start and end; no growth allowed.
+- [ ] Hot paths reviewed for allocations (Span, ArrayPool, stackalloc).
+- [ ] Deep security review of the whole server: every listener, every parser of network input, logins,
+      paths (traversal), passwords, TLS, the admin API. Every finding fixed or in BUGS.md by name.
+
+### Phase 15 - run as a Docker container (an option)
+
+No Docker file exists in RetroServer today (checked 2026-11-22). Plan it from the start so nothing built
+before it rules it out:
+- [ ] A Linux image (.NET runtime on Linux), built in CI, with the normal Windows/Linux install kept.
+- [ ] All data in ONE folder mounted as a volume: the data folder already moves with `RETROFS_DATA_PATH`
+      (`PathHelper.GetRetroFSPath`). Config files, users, state files, served folders and logs live there.
+- [ ] Every setting can come from environment variables (the `--Xmsg:...` keys as `Xmsg__...`).
+- [ ] Every listener binds to a configurable address: inside a container `127.0.0.1` cannot be reached from
+      outside, so "localhost only" defaults need a container setting. The "no login on 127.0.0.1" rule must
+      not open a hole there: a connection through Docker's port mapping does not come from 127.0.0.1.
+- [ ] A documented list of ports to publish (hub, HDLC, console, TNFS, Econet, DriveWire, admin API, dial-up).
+- [ ] Windows-only parts need a Linux way: certificates from a file (not only the Windows certificate store),
+      printing to a file or PDF when there is no system printer, serial devices passed in with `--device`.
+- [ ] A health check and a clean stop on SIGTERM (the XMSG shutdown sequence must run, or D100's XMSG crashes).
+- [ ] A test that builds the image and starts it with every protocol off.
+
 
 
 ## Config shape (`<data>\xmsg-config.json`, same loader pattern as the other protocols)
