@@ -1,6 +1,6 @@
 # Plan: dial-up ISP in RetroServer (SLIP, then PPP)
 
-**Next:** build step 1 - the dial-up listener (TCP port, text login with the "dial-up" right, then SLIP onto `RetroIO.Network.Router` on 10.42.0.0/24, pool or fixed address). NAT (step 2) after the subnet question to RetroIO is answered.
+**Next:** wait for RetroIO to answer the reuse proposal (move RetroCore's dial-up session into RetroIO) and the NAT subnet question; then build the RetroServer dial-up listener on it.
 
 ## What Ronny decided (2026-11-22)
 
@@ -100,4 +100,8 @@ No modem answer side, no SLIP/PPP, no IP router or NAT exists in RetroIO or Retr
 
 - The moved NAT (RetroIO 9a68185) is set up on 10.0.2.0/24 (router 10.0.2.1, gateway 10.0.2.2, name server
   10.0.2.3). The dial-up subnet is 10.42.0.0/24 (Ronny). Asked whether the NAT works on any subnet.
+- RetroCore already has a dial-up ISP: `RetroCore.Network.DialUp` (`SlipDialUpService`, `SlipDialUpSession`, RetroCore
+  d158dd68c), text login + SLIP + its own NAT per call. To keep one copy, proposed to RetroIO (2026-11-22): move the
+  session into RetroIO with a pluggable login check and packet side (a router link); RetroCore's built-in ISP and
+  RetroServer both use it. RetroServer's listener is built on that once it is in.
 
