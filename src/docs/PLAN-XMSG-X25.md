@@ -1,6 +1,6 @@
 # Plan: XMSG in RetroServer (file server, connect-to gateway, sync), then protocol switches and users
 
-**Next:** the XMSG program toolkit (command framework and startup file are built), then chat step 1 (server: the missing commands), then Phase 2 - many links on one node. Phase 1 is in place (uncommitted): the shared package `RetroIO.Protocols.Xmsg.Hosting` exists and xmsgrunner uses it. Still owed from Phase 1: a live check that xmsgrunner reaches D100. The topology class kept its name `TopologyConfig`.
+**Next:** find SINTRAN's rule for a restarting neighbour (see "Moving xmsgrunner"), then the XMSG program toolkit (command framework and startup file are built), then chat step 1 (server: the missing commands), then Phase 2 - many links on one node. Phase 1 is in place (uncommitted): the shared package `RetroIO.Protocols.Xmsg.Hosting` exists and xmsgrunner uses it. Still owed from Phase 1: a live check that xmsgrunner reaches D100. The topology class kept its name `TopologyConfig`.
 
 ## Context
 
@@ -257,6 +257,90 @@ Steps, in order:
 Verified when: each command answered by the C# server and by CHATSV the same way (D100 measured); a trunk
 RetroServer <-> D102 carries a line both ways and a `/tell D102!NAME`; `chat-mon` drives both servers; the
 Terminal.Gui screen matches CHAT on SINTRAN side by side.
+
+### Moving xmsgrunner into RetroServer (decided by Ronny 2026-11-11)
+
+The old program goes away. What it does moves into RetroServer, and nothing new is added to xmsgrunner.
+
+- **One machine number** for the whole of RetroServer.
+- **Name:** the "COSMOS File Server", with "Sync" as a section inside it that has its own on/off switch. The file
+  server is the main part: SINTRAN users list, read and copy files on RetroServer by naming its machine number
+  (Phase 3). Sync is built on top of it and uses the same file requests.
+- **Removed, not moved:** the old copy of the message stack that the first argument "legacy" starts
+  (`RunLegacyAsync`, `LiveNode`). Delete it from the runner, and from RetroIO wherever nothing else uses it.
+- **The chat load test** moves to the chat samples in RetroIO.
+- **Sending a batch job** (`--append-batch`: one request asking a machine's batch service to add a job to a batch
+  queue there) becomes a command in the new command-line tool.
+- **Saved state, research first.** The old program keeps four small files; none exists on this machine today
+  (searched 2026-11-11):
+  - the next message number per ND machine;
+  - the fixed header number of each link;
+  - where the file server's connection numbers start;
+  - which files sync has already moved.
+
+  When SINTRAN restarts its own XMSG it sends a reachability message, and both sides start again at 0
+  (live-verified, `XmsgNode.cs`). When OUR side restarts, the ND keeps counting. Our one try at a "we restarted"
+  message was ignored, and the reason is not known.
+  - **Step 1 - done 2026-11-21.** The manuals say nothing about it (COSMOS Operator Guide ND-30.025.02,
+    Programmer Guide ND-60.164.3). So it was measured: D102 ran `(UTILITY)XMSG-STARTEX-L03:MODE` (stop XMSG,
+    start XMSG, rebuild the tables) while D100 kept running, both on the Ethernet hub. Capture:
+    RetroIO `src/DOC/captures/2026-11-21-xmsg-restart-d102-over-ethernet-hub.pcap`.
+    - Before: `LIST-SYSTEMS` on both said 515 sent, 515 received. After: **2 and 2 on both** - D100 started
+      again with D102 although only D102 restarted. So SINTRAN does have a restart rule.
+    - What D102 sent, in order (bytes after the 3-byte LLC header):
+      1. on STOP-XMSG, a frame of kind `60` on the old network connection (ids 016B/036B); D100 answers `7F`;
+      2. on START-NET-SERVER, a frame of kind `0F` asking for a NEW network connection; D100 answers `1F`
+         and both use new ids (016C/0387) and a fresh frame counter from 0;
+      3. the first message on the new connection is the XMSG INIT, `2113 0019 0064 0066 FFFF 0001 DE08`;
+         D100 answers `2113 0013 0066 0064 FFFF 0001 DE0E` - not the refusal (`0017`) our announce drew;
+      4. normal messages follow, numbered from 0.
+    - Our INIT has the same shape (`2113 0019 0064 0067 FFFF 0001 DE07` from 103). The difference we can see is
+      that SINTRAN sends it as the first message on a NEW network connection, after closing the old one.
+      **Not yet proven** which of the two makes D100 reset: the new connection, or the INIT on it. Over HDLC
+      there is no such connection layer, so what plays its part there is also not known.
+  - **Step 1b - done 2026-11-21, works on Ethernet.** `NdLinkLayer.Reopen` (RetroIO) does what D102 did, and
+    the runner has `--reopen-link`. Live, against D100 on the hub: our node (19999) ran, D100 listed its files
+    (D100 counter for 19999: 5 / 5); our node was stopped and its counter files DELETED; started again with
+    `--reopen-link`: new connection request, D100 confirmed it, our INIT got the normal reply, and D100's
+    counter for 19999 read **0 / 0**. So on Ethernet **no saved message counter is needed**: a restart opens
+    a new connection and sends the INIT. (After a process restart our old connection ids are gone, so there
+    is nothing to close; the new connection request alone was accepted.) The INIT on the OLD connection was
+    already measured not to work (2026-08-17).
+  - **Left over from that test:** D100 then reused its OLD file-access connection to us, which our restarted
+    file server does not know, and the listing hung. Written up in RetroIO `src/BUGS.md` (Q group). Not a
+    counter problem.
+  - **Step 1c:** the same question over HDLC, where there is no such connection layer. Not tested yet.
+  - **Step 2:** if such a message exists, RetroServer sends it and keeps no message-number file. If not,
+    RetroServer keeps the numbers in its data folder under `xmsg\peers\<machine>\`.
+  - The link header number and the sync list are kept in any case.
+- **Command-line tool `retroserver-cli`.** It logs in to the server like a user and runs commands one at a time or
+  from a script, much like `sqlcmd` for SQL Server. It uses the same management API as RetroAdmin, so nothing can
+  be done from it that the API does not check. First commands: push or pull a file, send a batch job, link status,
+  sync now. RetroAdmin gets a page for the same one-off jobs.
+- **Sync settings** (questions still open; ask before Phase 5):
+  - when it runs: when a file changes, a full scan at start, every N minutes;
+  - each direction switched on separately (to SINTRAN, from SINTRAN);
+  - one local folder, with a folder per SINTRAN user under it, given as a Windows or a Linux/Mac path;
+  - which users, and for each user all files or a list of patterns with `*` (for example `*part*.*ext-part*`);
+  - which file types are binary, and which get the parity bit set when sent to SINTRAN and removed when they come
+    back;
+  - local names use a dot between name and type, because `:` is not allowed in a local file name;
+  - possibly a `.xat` file beside each file for the SINTRAN details (type, rights, dates).
+- **Answer routing questions** (Ronny 2026-11-11). RetroServer answers the route and system list questions a
+  SINTRAN machine sends (`LIST-ROUTE`, `LIST-SYSTEMS` in XROUT), from its own route table, so it shows up on the
+  ND like any other machine. The old program already answers them; this moves with the node (see Phase 2,
+  services 75 and 69).
+- **A terminal to CONNECT-TO from SINTRAN** (Ronny 2026-11-11, low priority, but in the plan). A SINTRAN user types
+  `CONNECT-TO <RetroServer>` and gets a command prompt from RetroServer, through the same terminal server
+  (`*TADADM`) the old program runs. Login with RetroServer users. First commands:
+  - XMSG statistics: links, messages in and out, errors, resends;
+  - COSMOS file server statistics: connections, files read and written, sync status;
+  - who is connected, the route table;
+  - more commands added later through the program toolkit's command table.
+
+  Later: an `ssh` command that opens an SSH session from this prompt to a modern machine, so SINTRAN can reach
+  out to modern hosts. That needs its own right per user, and an SSH client library (SSH.NET is a client, so it
+  fits; not checked yet).
 
 ### Phase 2 - many links on one node
 
