@@ -1,6 +1,6 @@
 # Plan: dial-up ISP in RetroServer (SLIP, then PPP)
 
-**Next:** build step 1, RetroServer's own services over SLIP, on `RetroIO.Network.Router` (API settled) and `RetroIO.Protocols.Slip`. NAT (step 2) waits for RetroIO's message that the moved NAT is in.
+**Next:** build step 1 - the dial-up listener (TCP port, text login with the "dial-up" right, then SLIP onto `RetroIO.Network.Router` on 10.42.0.0/24, pool or fixed address). NAT (step 2) after the subnet question to RetroIO is answered.
 
 ## What Ronny decided (2026-11-22)
 
@@ -81,4 +81,23 @@ No modem answer side, no SLIP/PPP, no IP router or NAT exists in RetroIO or Retr
 - Also moving from RetroCore, no date yet: Ethernet links, hub, multicast and TAP as `RetroIO.Network.Ethernet`,
   and pcap as `RetroIO.Network.Pcap`. The LAN bridge (step 3) uses those.
 - Step 1 (own services over SLIP) needs only the router and can start now.
+
+## Decided by Ronny (2026-11-22, second round)
+
+- **Who may dial in:** only users an admin has ticked. A new "dial-up" right per user and per group, off by
+  default, set in RetroAdmin.
+- **Caller address:** a free address from the pool; an admin can give a user a fixed address in the profile. A
+  call whose fixed address is already in use is refused.
+- **The phone line:** the machine dials with the virtual modem that already exists in RetroCore
+  (`HackerCorpLabs.Emulation.Transports.Modem`, `HayesModemTransport`: `ATDT host:port` opens a TCP connection
+  and prints `CONNECT` once it is up - checked in its `Dial` and `OnInnerStateChanged`). So RetroServer only
+  listens on a TCP port and starts with the text login; it does not answer AT commands itself.
+  - Old operating systems that only dial digits: the MODEM gets a table that maps phone numbers to
+    `host:port` (Ronny). It does not have one today (checked 2026-11-22); that is RetroCore's change, asked of the
+    RetroCore session.
+
+## Open with the RetroIO session
+
+- The moved NAT (RetroIO 9a68185) is set up on 10.0.2.0/24 (router 10.0.2.1, gateway 10.0.2.2, name server
+  10.0.2.3). The dial-up subnet is 10.42.0.0/24 (Ronny). Asked whether the NAT works on any subnet.
 
