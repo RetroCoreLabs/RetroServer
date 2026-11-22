@@ -123,9 +123,8 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 - [ ] Routes from the topology plus the links that came up; direct and indirect shown with link state.
 - [ ] Relay between links (`DatagramRelay`); hub <-> HDLC relay changes hop byte 13 to 12 and the checksum,
       keeps Flags1 and the destination.
-- [ ] Node rules from live work: link up on our SABM's UA; obey the peer's window (LAPB address byte); XEIMA for a
-      closed port; XROUT services 75 and 69 answered on our own next Flags1; connect letters to the target system.
-- [ ] Node defects dated 2026-11-10 in RetroIO `src/BUGS.md` (closed port, our own resends, name lookup, kernel
+- [ ] Node rules from live work: link up on our SABM's UA; obey the peer's window (LAPB address byte); XROUT services 75 and 69 answered on our own next Flags1; connect letters to the target system.
+- [ ] Node defects dated 2026-11-10 in RetroIO `src/BUGS.md` (our own resends, name lookup, kernel
       bridge, repeats).
 
 ### Phase 6 - COSMOS file server with per-user folders
