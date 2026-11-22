@@ -130,7 +130,7 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 
 ### Phase 6 - COSMOS file server with per-user folders
 
-- [ ] `IFaFileStore` from `FolderFileStore`; `FaServer` takes the interface.
+- [x] `IFaFileStore` from `FolderFileStore`; `FaServer` takes the interface.
 - [ ] Root on any storage, reusing the Econet disc resolution (`EconetVfsDiscs.cs`); check that TNFS gives a
       seekable stream and what happens when it is down.
 - [ ] USER from each request -> `<root>/<USER>/`, name checks, no path escape, the real user in the directory walk.
