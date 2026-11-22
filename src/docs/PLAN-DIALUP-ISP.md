@@ -68,3 +68,17 @@ No modem answer side, no SLIP/PPP, no IP router or NAT exists in RetroIO or Retr
 ## Open questions for Ronny
 
 - Default TCP port for the phone line: not chosen yet (proposal follows with the service).
+
+## Agreed with the RetroIO session (2026-11-22)
+
+- `RetroIO.Network.Router` and `RetroIO.Protocols.Slip` keep their names; the router's API is settled
+  (`IpRouter`, `AddLink`, `RemoveLink`, `SendFromLocal`, `OnLocal`, `OnUpstream`, `OnDrop`), plus
+  `SendFromUpstream(packet)` for replies coming back from the NAT (RetroIO ca92d09).
+- NAT: today's `IpNat` in `RetroIO.Network.Nat` is being deleted and replaced by RetroCore's NAT (`NatRouter`,
+  `NatEthernetBackend`, same package and namespace). Do NOT build on `IpNat`; wait for RetroIO's message that
+  the moved NAT is in. Hookup: `router.OnUpstream` into the NAT's IP-packet entry, the NAT's `OnPacketReceived`
+  into `router.SendFromUpstream`.
+- Also moving from RetroCore, no date yet: Ethernet links, hub, multicast and TAP as `RetroIO.Network.Ethernet`,
+  and pcap as `RetroIO.Network.Pcap`. The LAN bridge (step 3) uses those.
+- Step 1 (own services over SLIP) needs only the router and can start now.
+
