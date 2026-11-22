@@ -95,7 +95,8 @@ second named port `<NAME>-ADMIN`, and the port a message arrived on is the permi
 - [ ] Connection to RetroServer: address, token, features, reconnect after RetroServer restarts.
 - [ ] Logging to RetroServer and the console with the same categories; a log-level command.
 - [ ] Admin port: opens `<NAME>-ADMIN`, port check, STATUS / STOP / HELP for free.
-- [ ] Run loop (Ctrl+C stops cleanly, exit codes); client parts with no drawing code (history, conversations).
+- [x] Run loop: Ctrl+C stops cleanly (`ProgramStop`), shared exit codes (`ProgramExitCode`).
+- [ ] Client parts with no drawing code (history, conversations).
 - [ ] Test package: in-memory and real-socket RetroServer, the socket-reset relay.
 - [ ] `xmsg-mon <server>`: one generic manager that fetches the server's command list for `?`.
 - [ ] Program list (name, kind, version) for RetroAdmin's "Programs" page.
