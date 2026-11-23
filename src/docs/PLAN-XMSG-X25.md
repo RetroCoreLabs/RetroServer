@@ -196,8 +196,9 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
       OpenTelemetry export of metrics and logs later is one line in the host. The shared class is
       `RetroTelemetry` in its own package RetroIO.Telemetry (a .NET Meter plus a kept log that also goes to ILogger);
       the API is `api/v1/telemetry/sources|metrics|log`. Names `retroio.<part>.<thing>`, OpenTelemetry
-      units (`By`, `s`, `{call}`), variants as labels (`direction=in`). Dial-up and the XMSG hub are on
-      it (RetroIO 78a91e1, b429f96). Still to move: TNFS, Econet, DriveWire, XMSG node; then a RetroAdmin page
+      units (`By`, `s`, `{call}`), variants as labels (`direction=in`). Dial-up, the XMSG hub and DriveWire
+      are on it (RetroIO 78a91e1, b429f96, and the DriveWire commit). DriveWire's per-session log lines
+      still go only to the session logger. Still to move: TNFS, Econet, XMSG node; then a RetroAdmin page
       that shows any part's metrics and log; then the OpenTelemetry exporter as a setting, off by default.
 
 ### Phase 12 - X.25: routing, XOT, calls from the console
