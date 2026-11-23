@@ -46,6 +46,9 @@ docker run -d -e XmsgHub__Enabled=true -e XmsgHub__BindAddress=0.0.0.0 -p 5010:5
 
 The image sets two itself: `RETROFS_DATA_PATH=/data` and `Management__Urls=http://0.0.0.0:5000`.
 
+To send statistics and logs to an OpenTelemetry collector, set `Telemetry__OtlpEndpoint`; see
+[TELEMETRY.md](TELEMETRY.md).
+
 ## Listen addresses
 
 Inside a container, a service listening on `127.0.0.1` cannot be reached from outside it, even with the
