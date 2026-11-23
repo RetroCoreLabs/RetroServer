@@ -201,10 +201,12 @@ public class Program
         Console.WriteLine("OPTIONS");
         Console.WriteLine("  --help, -h, /?                  Show this text and exit.");
         Console.WriteLine();
+        Console.WriteLine("  --Tnfs:Enabled=true|false       TNFS on or off for this run.");
         Console.WriteLine("  --Tnfs:RootDirectory=<path>     Directory served over TNFS.");
         Console.WriteLine("  --Tnfs:UdpPort=<port>           TNFS UDP port.               (default 16384)");
         Console.WriteLine("  --Tnfs:TcpPort=<port>           TNFS TCP port.               (default 16384)");
         Console.WriteLine();
+        Console.WriteLine("  --Econet:Enabled=true|false     Econet on or off for this run.");
         Console.WriteLine("  --Econet:RootDirectory=<path>   Directory served over Econet.");
         Console.WriteLine("  --Econet:UdpPort=<port>         Econet AUN UDP port.         (default 32768)");
         Console.WriteLine();

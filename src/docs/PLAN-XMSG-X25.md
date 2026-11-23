@@ -227,7 +227,6 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 Started 2026-11-23: `docker/Dockerfile`, `eng/build-docker.ps1`, `/health`, and `docs/DOCKER.md` (how to run it,
 ports, what is missing). The image starts and answers `/health`. Still to do:
 - [ ] Build the image in CI.
-- [ ] Every setting can come from environment variables: TNFS and Econet have no `Enabled` override yet.
 - [ ] Every listener binds to a configurable address: inside a container `127.0.0.1` cannot be reached from
       outside, so "localhost only" defaults need a container setting. The "no login on 127.0.0.1" rule must
       not open a hole there: a connection through Docker's port mapping does not come from 127.0.0.1.

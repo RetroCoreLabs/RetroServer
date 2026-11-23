@@ -68,11 +68,8 @@ Default ports, published only for the protocols you switch on:
 
 - **Protocols that start switched on.** A fresh `/data` today starts TNFS, Econet and DriveWire switched on
   (seen 2026-11-23 starting the image with an empty volume). The plan's "all protocols off by default"
-  step is not done yet. Until it is, switch them off in their settings files in `/data`
-  (`"Enabled": false` in `tnfs-config.json` and `econet-config.json`), or DriveWire with
-  `DriveWire__Enabled=false`.
-- **Not every setting has an override yet.** TNFS and Econet have no `Enabled` override (only their root
-  folder and ports do), so those two are switched only in their files.
+  step is not done yet. Until it is, switch them off with `Tnfs__Enabled=false`, `Econet__Enabled=false`
+  and `DriveWire__Enabled=false`, or with `"Enabled": false` in their settings files in `/data`.
 - No CI build of the image yet, and no test that starts it.
 - Windows-only parts have no Linux way yet: a certificate from the Windows certificate store, printing to
   a system printer, serial devices.
