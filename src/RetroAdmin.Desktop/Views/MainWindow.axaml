@@ -87,6 +87,12 @@
                             Margin="0,5"/>
 
                     <Button Classes="NavButton"
+                            Content="Telemetry"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Telemetry"
+                            Margin="0,5"/>
+
+                    <Button Classes="NavButton"
                             Content="DriveWire"
                             Command="{Binding NavigateCommand}"
                             CommandParameter="DriveWire"

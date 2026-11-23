@@ -133,6 +133,7 @@ public partial class MainWindowViewModel : ViewModelBase
             "Econet" => new EconetMonitorViewModel(_connection),
             "XmsgHub" => new XmsgHubViewModel(_connection),
             "XmsgNode" => new XmsgNodeSettingsViewModel(_connection),
+            "Telemetry" => new TelemetryViewModel(_connection),
             "DriveWire" => new DriveWireSettingsViewModel(_connection),
             "Security" => new SecuritySettingsViewModel(_connection),
             "Mounts" => new MountsViewModel(_connection),
