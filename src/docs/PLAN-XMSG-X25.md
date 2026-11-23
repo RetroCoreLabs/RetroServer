@@ -227,6 +227,10 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 - [ ] Memory over a long run for the other protocols. DriveWire measured 2026-11-23 (`Measure_MemoryOverManyBatches`,
       150 rounds of 32 clients): memory rises for the first ~16 rounds, then stays level; two memory dumps (round 20
       and round 149, dotnet-gcdump) show RetroIO's own objects at exactly 54,424 bytes both times.
+      Econet measured 2026-11-23 (`EconetLoadTests.Measure_MemoryOverManyBatches`, 30 rounds of 16 stations): level,
+      5.9 MB at round 0 and at round 29, no session left. The first run seemed to grow 250 KB a round; a full dump
+      showed that was NUnit keeping the test server's console log, not the server. Still to measure: TNFS, the XMSG
+      hub, the XMSG node, dial-up.
 - [ ] Hot paths reviewed for allocations (Span, ArrayPool, stackalloc).
 - [ ] Deep security review of the whole server: every listener, every parser of network input, logins,
       paths (traversal), passwords, TLS, the admin API. Every finding fixed or in BUGS.md by name.
