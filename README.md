@@ -1,7 +1,8 @@
 # RetroServer
 
-**A file server for retro machines.** Two applications: a service that serves **TNFS** and **Econet/AUN** from any
-storage RetroIO can mount, and a desktop app to administer it.
+**A server for retro machines.** Two applications: a service that serves **TNFS**, **Econet/AUN** and **DriveWire**
+from any storage RetroIO can mount, is an **XMSG** machine on a Norsk Data network, and offers **dial-up**
+internet to machines that call in with a modem; and a desktop app to administer it.
 
 [![build](https://github.com/RetroCoreLabs/RetroServer/actions/workflows/build.yml/badge.svg)](https://github.com/RetroCoreLabs/RetroServer/actions/workflows/build.yml)
 [![release](https://img.shields.io/github/v/release/RetroCoreLabs/RetroServer)](https://github.com/RetroCoreLabs/RetroServer/releases)
@@ -35,7 +36,7 @@ NuGet packages. This repository is the **hosting** and the **administration**.
 
 | Application | What it is | README |
 |---|---|---|
-| `RetroServer` | The server: TNFS + Econet, with a REST and SignalR management API | [README](src/RetroServer.Service/README.md) |
+| `RetroServer` | The server: TNFS, Econet, DriveWire, the XMSG hub and node, dial-up; a REST and SignalR management API | [README](src/RetroServer.Service/README.md) |
 | `RetroAdmin` | Avalonia desktop app to watch and administer a running server | [README](src/RetroAdmin.Desktop/README.md) |
 
 ---
@@ -50,6 +51,13 @@ No tagged release yet, so the release and download badges above are empty until 
   a remote share, or a mix of them at once.
 - **The protocols are tested in RetroIO, not here.** This repository hosts and administers;
   one test project covers the hosting.
+- **Every protocol starts off.** Each one is switched on in its settings file or for one run with
+  `--<Protocol>:Enabled=true`; an install from before 2026-11-23 keeps what it had. `RetroServer --help` lists
+  every setting.
+- **Statistics and logs** look the same for every part and can be sent to an OpenTelemetry collector:
+  [docs/TELEMETRY.md](src/docs/TELEMETRY.md).
+- **Docker:** a Linux image, built and started by the CI build: [docs/DOCKER.md](src/docs/DOCKER.md).
+- **Plans:** [XMSG and X.25](src/docs/PLAN-XMSG-X25.md), [dial-up](src/docs/PLAN-DIALUP-ISP.md).
 - **Not yet measured:** throughput to a real 8-bit client. No number is claimed here.
 
 ---

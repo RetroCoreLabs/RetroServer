@@ -1,6 +1,6 @@
 # Plan: XMSG in RetroServer (file server, connect-to gateway, sync), then protocol switches and users
 
-**Next:** Phase 1, first todo - the restart test over HDLC: restart our node on an HDLC line to D100 and read `LIST-SYSTEMS`, to see whether D100 starts counting from 0 again as it does on Ethernet.
+**Next:** Phase 1, first todo - the restart test over HDLC: restart our node on an HDLC line to D100 and read `LIST-SYSTEMS`, to see whether D100 starts counting from 0 again as it does on Ethernet. That needs D100 running; until then the next item that needs no machine is Phase 14, the load and memory tests.
 
 ## Goal
 

@@ -7,8 +7,13 @@
 
 ## What it is
 
-The server. It hosts a **TNFS** server and an **Econet/AUN** file server over shared storage, exposes a REST and
-SignalR **management API**, and runs either as a console application or as a **Windows service**.
+The server. It hosts a **TNFS** server, an **Econet/AUN** file server and a **DriveWire** server over shared storage,
+an **XMSG hub** and **XMSG node** for Norsk Data machines, and a **dial-up** internet service; it exposes a REST and
+SignalR **management API**, and runs as a console application, as a **Windows service**, or in a **Docker** container
+([docs/DOCKER.md](../docs/DOCKER.md)).
+
+**Every protocol starts off.** Switch one on in its settings file (`"Enabled": true`) or for one run on the
+command line (`--Tnfs:Enabled=true`). An install from before 2026-11-23 keeps the switches it had.
 
 ## Why you need it
 
@@ -59,11 +64,13 @@ line. Two groups worth knowing:
 | Key | What it does |
 |---|---|
 | `Management:Urls` | Where the management API listens. Semicolon-separated. Defaults are printed at start-up |
-| `Tnfs:` … | The TNFS server's settings |
-| `Econet:` … | The Econet server's settings, including the `Discs[]` array |
+| `Management:Swagger` | `true` serves the Swagger page at `/swagger` (default `true`) |
+| `Management:LogLines` | Log lines kept for RetroAdmin (default 1000) |
+| `Telemetry:OtlpEndpoint` | Send statistics and logs to an OpenTelemetry collector (default off); see [docs/TELEMETRY.md](../docs/TELEMETRY.md) |
+| `Tnfs:` … `Econet:` … `DriveWire:` … `XmsgHub:` … `XmsgNode:` … `DialUp:` … | Each protocol's settings, `Enabled` first |
 
-Every switch the server really reads is documented in `Program.cs` itself — worth reading rather than guessing,
-because a key that is not read fails silently.
+`RetroServer --help` lists every key the server reads. A key that is not read fails silently, so check
+there rather than guessing.
 
 ### Running as a Windows service
 
