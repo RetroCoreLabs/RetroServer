@@ -1,6 +1,6 @@
 # Plan: dial-up ISP in RetroServer (SLIP, then PPP)
 
-**Next:** a live call from RetroCore's emulated modem (`ATDT 127.0.0.1:6400`), which needs the RetroCore session. Built and tested (RetroIO): the listener on port 6400, login with RetroServer users, SLIP, the router and the NAT on 10.42.0.0/24, callers reaching each other (test `OneCaller_SendsAnIpPacketToAnother_OverSlip_AndItArrives`, RetroIO cee9818). Not tested yet: traffic out through the NAT, and RetroServer's own services (TNFS over UDP) from a caller. The router sends no ICMP yet, so a caller's ping gets no answer.
+**Next:** a live call from RetroCore's emulated modem (`ATDT 127.0.0.1:6400`), which needs the RetroCore session. Built and tested (RetroIO): the listener on port 6400, login with RetroServer users, SLIP, the router and the NAT on 10.42.0.0/24, callers reaching each other (test `OneCaller_SendsAnIpPacketToAnother_OverSlip_AndItArrives`, RetroIO cee9818). A caller reaches a UDP service on the PC through the gateway 10.42.0.2 and gets the answer (RetroIO, test `ACaller_ReachesAUdpServiceOnThePc_ThroughTheGateway_AndGetsTheAnswer`). Not tested yet: traffic out to the internet through the NAT, TCP, and a real TNFS request from a caller. The router sends no ICMP yet, so a caller's ping gets no answer.
 
 ## What Ronny decided (2026-11-22)
 
