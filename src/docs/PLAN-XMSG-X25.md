@@ -216,7 +216,8 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 
 ### Phase 14 - load, memory and security
 
-- [ ] Load tests for the XMSG node and dial-up. Done 2026-11-23 for the XMSG hub (`HubServerTests.Load_...`: 16
+- [ ] Load test for the XMSG node. Done 2026-11-23 for dial-up (`DialUpServerTests.Load_...`: 16 callers at once, ten
+      waves, 160 calls in 14.5 s, each its own address, every line free again, nothing refused), for the XMSG hub (`HubServerTests.Load_...`: 16
       machines at a steady pace, 48,000 frames delivered in about 0.3 s, none lost; sent as one burst, 3,000 frames
       to each 256-frame member queue, about a third are dropped as "slow", which is the hub's design) and for TNFS, Econet and DriveWire
       (RetroIO tests `TnfsLoadTests`, `EconetLoadTests`, `DriveWireLoadTests`, category Load, run by name): 32 TNFS
