@@ -198,8 +198,8 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
       the API is `api/v1/telemetry/sources|metrics|log`. Names `retroio.<part>.<thing>`, OpenTelemetry
       units (`By`, `s`, `{call}`), variants as labels (`direction=in`). Dial-up, the XMSG hub and DriveWire
       are on it (RetroIO 78a91e1, b429f96, and the DriveWire commit). TNFS and Econet have their metrics on it
-      too (RetroIO afb2874). Logs not on it yet: DriveWire's per-session lines, and all of TNFS and Econet.
-      Still to move: the XMSG node; then a RetroAdmin page
+      too (RetroIO afb2874), and the XMSG node has metrics and log (RetroIO 94b095d). Logs not on it yet: DriveWire's per-session lines, and all of TNFS and Econet.
+      Still to do: a RetroAdmin page
       that shows any part's metrics and log; then the OpenTelemetry exporter as a setting, off by default.
 
 ### Phase 12 - X.25: routing, XOT, calls from the console
