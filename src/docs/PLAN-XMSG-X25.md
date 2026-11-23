@@ -232,7 +232,9 @@ image and runs it (job written 2026-11-23, not yet seen running on GitHub). Stil
       not open a hole there: a connection through Docker's port mapping does not come from 127.0.0.1.
 - [ ] Windows-only parts need a Linux way: certificates from a file (not only the Windows certificate store),
       printing to a file or PDF when there is no system printer, serial devices passed in with `--device`.
-- [ ] A health check and a clean stop on SIGTERM (the XMSG shutdown sequence must run, or D100's XMSG crashes).
+- [ ] The XMSG node's shutdown (log TAD users out, then close the links) seen running on `docker stop` with a
+      machine connected. Checked 2026-11-23 without one: `docker stop` ends RetroServer with exit code 0 in about
+      1 s, the hub logs that it stopped, and `/health` exists.
 
 
 
