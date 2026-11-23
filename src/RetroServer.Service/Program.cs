@@ -66,6 +66,10 @@ public class Program
 
         app.MapRetroServer(options);
 
+        // Health check for a container or a service monitor: "OK" once the host is up, no login
+        // needed and nothing about the server given away (docs/DOCKER.md).
+        app.MapGet("/health", () => "OK").AllowAnonymous();
+
         await RetroIdpBootstrap.InitializeAsync(app.Services);
         await EconetUserBootstrap.EnsureProfilesAsync(app.Services.GetRequiredService<RetroIO.Identity.IRetroIDP>());
 

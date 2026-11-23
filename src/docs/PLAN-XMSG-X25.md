@@ -224,16 +224,13 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 
 ### Phase 15 - run as a Docker container (an option)
 
-No Docker file exists in RetroServer today (checked 2026-11-22). Plan it from the start so nothing built
-before it rules it out:
-- [ ] A Linux image (.NET runtime on Linux), built in CI, with the normal Windows/Linux install kept.
-- [ ] All data in ONE folder mounted as a volume: the data folder already moves with `RETROFS_DATA_PATH`
-      (`PathHelper.GetRetroFSPath`). Config files, users, state files, served folders and logs live there.
-- [ ] Every setting can come from environment variables (the `--Xmsg:...` keys as `Xmsg__...`).
+Started 2026-11-23: `docker/Dockerfile`, `eng/build-docker.ps1`, `/health`, and `docs/DOCKER.md` (how to run it,
+ports, what is missing). The image starts and answers `/health`. Still to do:
+- [ ] Build the image in CI.
+- [ ] Every setting can come from environment variables: TNFS and Econet have no `Enabled` override yet.
 - [ ] Every listener binds to a configurable address: inside a container `127.0.0.1` cannot be reached from
       outside, so "localhost only" defaults need a container setting. The "no login on 127.0.0.1" rule must
       not open a hole there: a connection through Docker's port mapping does not come from 127.0.0.1.
-- [ ] A documented list of ports to publish (hub, HDLC, console, TNFS, Econet, DriveWire, admin API, dial-up).
 - [ ] Windows-only parts need a Linux way: certificates from a file (not only the Windows certificate store),
       printing to a file or PDF when there is no system printer, serial devices passed in with `--device`.
 - [ ] A health check and a clean stop on SIGTERM (the XMSG shutdown sequence must run, or D100's XMSG crashes).
