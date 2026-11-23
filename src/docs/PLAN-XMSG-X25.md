@@ -183,8 +183,8 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 
 ### Phase 11 - protocols off by default; users, groups and rights
 
-- [ ] Every protocol `Enabled`, default off; old installs keep their value. `RetroServerOptions.Enable*` are never
-      set by the host today (RetroIO BUGS.md).
+- [ ] `RetroServerOptions.Enable*` are never set by the host today (RetroIO BUGS.md). (Every protocol's
+      `Enabled` is off by default and old installs keep theirs: RetroIO, 2026-11-23.)
 - [ ] `RetroUser`: XMSG rights (file server, gateway, sync, console) and X.25 call; groups carry rights.
 - [ ] Make the default admin password `retroadmin` be changed (still unchanged on the lab machine 2026-11-21).
 - [ ] REST and RetroAdmin pages for users, groups and rights.

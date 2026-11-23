@@ -30,6 +30,11 @@ docker stop -t 30 retroserver
   must log its TAD users out before its links close, or a real SINTRAN machine's XMSG can crash, so give
   it time with `-t 30`.
 
+## Every protocol starts off
+
+A fresh `/data` starts with every protocol switched off. Switch one on in its settings file in `/data`, or for
+the run with an environment variable such as `Tnfs__Enabled=true`.
+
 ## Settings from environment variables
 
 Every setting that works on the command line as `--Part:Key=value` also works as an environment variable
@@ -66,10 +71,6 @@ Default ports, published only for the protocols you switch on:
 
 ## Not done yet
 
-- **Protocols that start switched on.** A fresh `/data` today starts TNFS, Econet and DriveWire switched on
-  (seen 2026-11-23 starting the image with an empty volume). The plan's "all protocols off by default"
-  step is not done yet. Until it is, switch them off with `Tnfs__Enabled=false`, `Econet__Enabled=false`
-  and `DriveWire__Enabled=false`, or with `"Enabled": false` in their settings files in `/data`.
 - No CI build of the image yet, and no test that starts it.
 - Windows-only parts have no Linux way yet: a certificate from the Windows certificate store, printing to
   a system printer, serial devices.
