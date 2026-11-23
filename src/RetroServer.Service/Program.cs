@@ -57,6 +57,34 @@ public class Program
             PrintBanners = !WindowsServiceHelpers.IsWindowsService()
         };
 
+        // The management API's own settings. Today's values stay the defaults: the Swagger page on,
+        // 1000 log lines kept. A value that is not understood is reported and the default kept.
+        string? swagger = builder.Configuration["Management:Swagger"];
+        if (!string.IsNullOrEmpty(swagger))
+        {
+            if (bool.TryParse(swagger, out bool swaggerOn))
+            {
+                options.EnableSwagger = swaggerOn;
+            }
+            else
+            {
+                Console.WriteLine($"Management:Swagger '{swagger}' is not true or false; the Swagger page stays on.");
+            }
+        }
+
+        string? logLines = builder.Configuration["Management:LogLines"];
+        if (!string.IsNullOrEmpty(logLines))
+        {
+            if (int.TryParse(logLines, out int kept) && kept > 0)
+            {
+                options.MaxLogEntries = kept;
+            }
+            else
+            {
+                Console.WriteLine($"Management:LogLines '{logLines}' is not a number above 0; {options.MaxLogEntries} lines are kept.");
+            }
+        }
+
         builder.Services.AddRetroServer(builder.Configuration, builder.Logging, options);
 
         WebApplication app = builder.Build();
@@ -200,6 +228,10 @@ public class Program
         Console.WriteLine();
         Console.WriteLine("OPTIONS");
         Console.WriteLine("  --help, -h, /?                  Show this text and exit.");
+        Console.WriteLine();
+        Console.WriteLine("  --Management:Urls=<url;url>     Management API addresses. (default http://localhost:5000;https://localhost:5001)");
+        Console.WriteLine("  --Management:Swagger=true|false The API description page /swagger. (default true)");
+        Console.WriteLine("  --Management:LogLines=<n>       Log lines kept for RetroAdmin. (default 1000)");
         Console.WriteLine();
         Console.WriteLine("  --Tnfs:Enabled=true|false       TNFS on or off for this run.");
         Console.WriteLine("  --Tnfs:RootDirectory=<path>     Directory served over TNFS.");
