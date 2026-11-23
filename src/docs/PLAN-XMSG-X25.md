@@ -199,7 +199,7 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
       units (`By`, `s`, `{call}`), variants as labels (`direction=in`). Dial-up, the XMSG hub and DriveWire
       are on it (RetroIO 78a91e1, b429f96, and the DriveWire commit). TNFS and Econet have their metrics on it
       too (RetroIO afb2874), and the XMSG node has metrics and log (RetroIO 94b095d). TNFS server and Econet logs are kept next to their metrics by a logging provider (RetroIO 28a601a). DriveWire's per-session lines too. Every part's log is now on it.
-      RetroAdmin has a Telemetry page that shows any part's metrics and log (not yet seen live). Still to do: the OpenTelemetry exporter as a setting, off by default.
+      RetroAdmin has a Telemetry page that shows any part's metrics and log (not yet seen live). OpenTelemetry export is a setting, off by default: `--Telemetry:OtlpEndpoint=http://collector:4318` sends every part's metrics and the log over OTLP/HTTP, `--Telemetry:ExportIntervalSeconds` (default 60). Checked 2026-11-23 against a local listener: the hub's metrics and log arrived.
 
 ### Phase 12 - X.25: routing, XOT, calls from the console
 

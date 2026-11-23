@@ -12,6 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using RetroIO.Protocols.Econet.FileServer.Users;
 using RetroIO.Protocols.Econet.Server;
 using RetroIO.Protocols.Tnfs.Server;
@@ -86,6 +90,8 @@ public class Program
         }
 
         builder.Services.AddRetroServer(builder.Configuration, builder.Logging, options);
+
+        AddOpenTelemetryExport(builder);
 
         WebApplication app = builder.Build();
 
@@ -203,6 +209,68 @@ public class Program
     }
 
     /// <summary>
+    /// Sends every part's metrics and log to an OpenTelemetry collector, when one is configured.
+    /// </summary>
+    /// <param name="builder">The host builder.</param>
+    /// <remarks>
+    /// Off unless <c>Telemetry:OtlpEndpoint</c> is set to the collector's OTLP/HTTP address (for
+    /// example <c>http://collector:4318</c>). The metrics are every RetroIO part's meter
+    /// (<c>RetroIO.*</c>, the <c>RetroTelemetry</c> shape); the log is RetroServer's log, with the
+    /// record attributes, which <c>RetroTelemetry</c> puts in a logger scope.
+    /// </remarks>
+    private static void AddOpenTelemetryExport(WebApplicationBuilder builder)
+    {
+        string? configured = builder.Configuration["Telemetry:OtlpEndpoint"];
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            return;
+        }
+
+        if (!Uri.TryCreate(configured.TrimEnd('/') + "/", UriKind.Absolute, out Uri? baseAddress)
+            || (baseAddress.Scheme != Uri.UriSchemeHttp && baseAddress.Scheme != Uri.UriSchemeHttps))
+        {
+            Console.WriteLine($"Telemetry:OtlpEndpoint '{configured}' is not an http or https address; nothing is exported.");
+            return;
+        }
+
+        // How often the metrics are sent; 60 s is the OpenTelemetry default.
+        int intervalSeconds = 60;
+        string? interval = builder.Configuration["Telemetry:ExportIntervalSeconds"];
+        if (!string.IsNullOrEmpty(interval) && (!int.TryParse(interval, out intervalSeconds) || intervalSeconds < 1))
+        {
+            Console.WriteLine($"Telemetry:ExportIntervalSeconds '{interval}' is not a number above 0; 60 is used.");
+            intervalSeconds = 60;
+        }
+
+        // Over HTTP the exporter takes the full path of each signal when it is set in code.
+        Uri metricsAddress = new Uri(baseAddress, "v1/metrics");
+        Uri logsAddress = new Uri(baseAddress, "v1/logs");
+
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(resource => resource.AddService("RetroServer"))
+            .WithMetrics(metrics => metrics
+                .AddMeter("RetroIO.*")
+                .AddOtlpExporter((exporter, reader) =>
+                {
+                    exporter.Protocol = OtlpExportProtocol.HttpProtobuf;
+                    exporter.Endpoint = metricsAddress;
+                    reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = intervalSeconds * 1000;
+                }));
+
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeScopes = true;
+            logging.AddOtlpExporter(exporter =>
+            {
+                exporter.Protocol = OtlpExportProtocol.HttpProtobuf;
+                exporter.Endpoint = logsAddress;
+            });
+        });
+
+        Console.WriteLine($"Telemetry: metrics and log go to the OpenTelemetry collector at {baseAddress}");
+    }
+
+    /// <summary>
     /// Writes the usage text.
     /// </summary>
     /// <remarks>
@@ -232,6 +300,8 @@ public class Program
         Console.WriteLine("  --Management:Urls=<url;url>     Management API addresses. (default http://localhost:5000;https://localhost:5001)");
         Console.WriteLine("  --Management:Swagger=true|false The API description page /swagger. (default true)");
         Console.WriteLine("  --Management:LogLines=<n>       Log lines kept for RetroAdmin. (default 1000)");
+        Console.WriteLine("  --Telemetry:ExportIntervalSeconds=<n> How often metrics are sent. (default 60)");
+        Console.WriteLine("  --Telemetry:OtlpEndpoint=<url>  Send metrics and log to an OpenTelemetry collector (OTLP/HTTP, e.g. http://collector:4318). (default: off)");
         Console.WriteLine();
         Console.WriteLine("  --Tnfs:Enabled=true|false       TNFS on or off for this run.");
         Console.WriteLine("  --Tnfs:RootDirectory=<path>     Directory served over TNFS.");

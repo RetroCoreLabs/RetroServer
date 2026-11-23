@@ -18,6 +18,8 @@
     <!-- Microsoft.Extensions.Hosting comes from the Microsoft.AspNetCore.App shared framework referenced above, so an explicit reference is redundant on net10 (NU1510) -->
     <!-- Lets the SAME exe run as a console app or a Windows service, decided at runtime. -->
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
     <!-- Microsoft.Extensions.Logging.Console comes from the Microsoft.AspNetCore.App shared framework referenced above, so an explicit reference is redundant on net10 (NU1510) -->
     <!-- Microsoft.Extensions.Configuration.Json comes from the Microsoft.AspNetCore.App shared framework referenced above, so an explicit reference is redundant on net10 (NU1510) -->
   </ItemGroup>
