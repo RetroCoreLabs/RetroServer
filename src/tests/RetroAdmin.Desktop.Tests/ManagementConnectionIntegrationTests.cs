@@ -96,6 +96,7 @@ public class ManagementConnectionIntegrationTests
                             $"--Management:Urls={TestManagementUrls} " +
                             $"--Tnfs:UdpPort={TestTnfsPort} --Tnfs:TcpPort={TestTnfsPort} " +
                             $"--Econet:UdpPort={TestEconetPort} " +
+                            "--DriveWire:Enabled=true --Tnfs:Enabled=true --Econet:Enabled=true " + // every protocol starts off (2026-11-23)
                             $"--DriveWire:Port={TestDriveWirePort} " +
                             $"--DriveWire:Drives:0:Path=\"{imagePath}\"",
                 UseShellExecute = false,
