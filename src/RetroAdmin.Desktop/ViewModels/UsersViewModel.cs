@@ -59,6 +59,12 @@ public partial class UsersViewModel : ViewModelBase
     private bool _newAllowEconet;
 
     [ObservableProperty]
+    private bool _newAllowDialUp;
+
+    [ObservableProperty]
+    private string _newDialUpAddress = string.Empty;
+
+    [ObservableProperty]
     private string _newGroupName = string.Empty;
 
     [ObservableProperty]
@@ -69,6 +75,12 @@ public partial class UsersViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _editAllowEconet;
+
+    [ObservableProperty]
+    private bool _editAllowDialUp;
+
+    [ObservableProperty]
+    private string _editDialUpAddress = string.Empty;
 
     [ObservableProperty]
     private string _editPassword = string.Empty;
@@ -89,6 +101,8 @@ public partial class UsersViewModel : ViewModelBase
         {
             EditAllowTnfs = true;
             EditAllowEconet = false;
+            EditAllowDialUp = false;
+            EditDialUpAddress = string.Empty;
             EditPassword = string.Empty;
             EditDisplayName = string.Empty;
             EditEmail = string.Empty;
@@ -98,6 +112,8 @@ public partial class UsersViewModel : ViewModelBase
         {
             EditAllowTnfs = value.AllowTnfs;
             EditAllowEconet = value.AllowEconet;
+            EditAllowDialUp = value.AllowDialUp;
+            EditDialUpAddress = value.DialUpAddress;
             EditPassword = string.Empty;
             EditDisplayName = value.DisplayName;
             EditEmail = value.Email;
@@ -183,7 +199,9 @@ public partial class UsersViewModel : ViewModelBase
                 GroupIds = GroupChoice.CheckedIds(NewUserGroups),
                 // Sent since 2026-11-10; before that the two boxes on the form went nowhere.
                 AllowTnfs = NewAllowTnfs,
-                AllowEconet = NewAllowEconet
+                AllowEconet = NewAllowEconet,
+                AllowDialUp = NewAllowDialUp,
+                DialUpAddress = NewDialUpAddress.Trim()
             };
 
             ApiResponse<UserDto>? created = await _connection.Api.CreateUserAsync(request);
@@ -200,6 +218,8 @@ public partial class UsersViewModel : ViewModelBase
             NewPassword = string.Empty;
             NewAllowTnfs = true;
             NewAllowEconet = false;
+            NewAllowDialUp = false;
+            NewDialUpAddress = string.Empty;
 
             LogUi("Info", "User created.");
             await LoadUsersAsync();
@@ -222,6 +242,9 @@ public partial class UsersViewModel : ViewModelBase
             {
                 AllowTnfs = EditAllowTnfs,
                 AllowEconet = EditAllowEconet,
+                AllowDialUp = EditAllowDialUp,
+                // Empty clears a fixed address: the pool is used again.
+                DialUpAddress = EditDialUpAddress.Trim(),
                 DisplayName = EditDisplayName,
                 Email = EditEmail,
                 IsActive = EditIsActive,
@@ -367,6 +390,9 @@ public partial class UsersViewModel : ViewModelBase
             IsActive = user.IsActive,
             AllowTnfs = user.AllowTnfs,
             AllowEconet = user.AllowEconet,
+            AllowDialUp = user.AllowDialUp,
+            DialUpAddress = user.DialUpAddress ?? string.Empty,
+            LastLoginDialUpAt = user.LastLoginDialUpAt,
             LastLoginAt = user.LastLoginAt,
             LastLoginTnfsAt = user.LastLoginTnfsAt,
             LastLoginEconetAt = user.LastLoginEconetAt,

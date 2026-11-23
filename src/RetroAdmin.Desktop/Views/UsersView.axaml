@@ -68,7 +68,15 @@
                     <CheckBox Content="Allow Econet"
                               IsChecked="{Binding NewAllowEconet}"
                               Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                    <CheckBox Content="Allow dial-up"
+                              IsChecked="{Binding NewAllowDialUp}"
+                              Foreground="{DynamicResource RetroFSWhiteBrush}"/>
                 </StackPanel>
+
+                <TextBox Watermark="Fixed dial-up address, for example 10.42.0.20 (empty: one from the pool)"
+                         Text="{Binding NewDialUpAddress}"
+                         Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                         Foreground="{DynamicResource RetroFSWhiteBrush}"/>
 
                 <Button Content="Create User"
                         Command="{Binding CreateUserCommand}"
@@ -101,8 +109,10 @@
                         <DataGridTextColumn Header="Active" Binding="{Binding IsActiveText}" Width="60"/>
                         <DataGridTextColumn Header="TNFS" Binding="{Binding AllowTnfsText}" Width="55"/>
                         <DataGridTextColumn Header="Econet" Binding="{Binding AllowEconetText}" Width="65"/>
+                        <DataGridTextColumn Header="Dial-up" Binding="{Binding AllowDialUpText}" Width="95"/>
                         <DataGridTextColumn Header="Last TNFS" Binding="{Binding LastLoginTnfsText}" Width="130"/>
                         <DataGridTextColumn Header="Last Econet" Binding="{Binding LastLoginEconetText}" Width="130"/>
+                        <DataGridTextColumn Header="Last dial-up" Binding="{Binding LastLoginDialUpText}" Width="130"/>
                         <DataGridTextColumn Header="Last failed" Binding="{Binding LastFailedLoginText}" Width="130"/>
                         <DataGridTextColumn Header="Groups" Binding="{Binding GroupsText}" Width="*"/>
                         <DataGridTemplateColumn Header="Actions" Width="Auto">
@@ -167,7 +177,15 @@
                             <CheckBox Content="Allow Econet"
                                       IsChecked="{Binding EditAllowEconet}"
                                       Foreground="{DynamicResource RetroFSWhiteBrush}"/>
+                            <CheckBox Content="Allow dial-up"
+                                      IsChecked="{Binding EditAllowDialUp}"
+                                      Foreground="{DynamicResource RetroFSWhiteBrush}"/>
                         </StackPanel>
+
+                        <TextBox Watermark="Fixed dial-up address (empty: one from the pool)"
+                                 Text="{Binding EditDialUpAddress}"
+                                 Background="{DynamicResource RetroFSBackgroundLightBrush}"
+                                 Foreground="{DynamicResource RetroFSWhiteBrush}"/>
 
                         <TextBox Watermark="New password (leave blank to keep current)"
                                  Text="{Binding EditPassword}"

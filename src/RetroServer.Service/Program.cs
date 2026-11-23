@@ -226,6 +226,18 @@ public class Program
         Console.WriteLine("  --XmsgHub:LogBufferSize=<n>                 Recent log lines kept.       (default 1000)");
         Console.WriteLine("  --XmsgHub:StatusIntervalSeconds=<s>         Seconds between status lines. (default 10)");
         Console.WriteLine();
+        Console.WriteLine("  Dial-up ISP (an emulated machine dials in with its modem: ATDT host:port. Each call gets");
+        Console.WriteLine("  a text login; only users with the dial-up right get in, then SLIP onto one subnet with a");
+        Console.WriteLine("  NAT to the internet; .2 on the subnet reaches this computer). Read from dialup-config.json;");
+        Console.WriteLine("  these override it for this run only.");
+        Console.WriteLine("  --DialUp:Enabled=<true|false>               Run the dial-up ISP.         (default false)");
+        Console.WriteLine("  --DialUp:Port=<port>                        TCP port the modem dials.    (default 6400)");
+        Console.WriteLine("  --DialUp:BindAddress=<address>              Address to listen on.        (default 127.0.0.1)");
+        Console.WriteLine("  --DialUp:MaxCalls=<n>                       Most calls at once.          (default 32)");
+        Console.WriteLine("  --DialUp:Network=<a.b.c.d>                  The callers' subnet.         (default 10.42.0.0)");
+        Console.WriteLine("  --DialUp:PrefixLength=<n>                   Its prefix length, 8 to 29.  (default 24)");
+        Console.WriteLine("  --DialUp:Greeting=<text>                    Shown before the login.      (default RetroServer ISP)");
+        Console.WriteLine();
         Console.WriteLine("  XMSG node (RetroServer as an XMSG machine: it joins the hub, and client and server");
         Console.WriteLine("  programs such as retro-chat and retro-chat-server connect to it). Read from");
         Console.WriteLine("  xmsgnode-config.json; these override it for this run only.");

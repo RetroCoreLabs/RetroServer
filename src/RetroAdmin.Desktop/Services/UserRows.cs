@@ -50,11 +50,19 @@ public class UserInfo
 
     public bool AllowEconet { get; set; }
 
+    /// <summary>Whether the user may dial in to the emulated ISP.</summary>
+    public bool AllowDialUp { get; set; }
+
+    /// <summary>The fixed dial-up address, or empty for one from the pool.</summary>
+    public string DialUpAddress { get; set; } = string.Empty;
+
     public DateTime? LastLoginAt { get; set; }
 
     public DateTime? LastLoginTnfsAt { get; set; }
 
     public DateTime? LastLoginEconetAt { get; set; }
+
+    public DateTime? LastLoginDialUpAt { get; set; }
 
     public DateTime? LastFailedLoginAt { get; set; }
 
@@ -68,6 +76,10 @@ public class UserInfo
     public string AllowTnfsText => AllowTnfs ? "Yes" : "No";
 
     public string AllowEconetText => AllowEconet ? "Yes" : "No";
+
+    public string AllowDialUpText => !AllowDialUp ? "No" : DialUpAddress.Length == 0 ? "Yes" : DialUpAddress;
+
+    public string LastLoginDialUpText => FormatTimestamp(LastLoginDialUpAt);
 
     public string LastLoginTnfsText => FormatTimestamp(LastLoginTnfsAt);
 
