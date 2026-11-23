@@ -216,8 +216,13 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 
 ### Phase 14 - load, memory and security
 
-- [ ] Load test per protocol with many clients at once; measure speed and memory, and fix what it shows.
-- [ ] Memory: a long run under load with the memory measured at the start and end; no growth allowed.
+- [ ] Load tests for the XMSG hub, the XMSG node and dial-up. Done 2026-11-23 for TNFS, Econet and DriveWire
+      (RetroIO tests `TnfsLoadTests`, `EconetLoadTests`, `DriveWireLoadTests`, category Load, run by name): 32 TNFS
+      clients, 3,200 requests in about 1 s; 16 Econet stations, 960 login/load/bye steps in 3.3 s; 32 DriveWire
+      clients, 3,200 sector transfers in 86 ms. All answered right, no session left.
+- [ ] Memory over a long run for the other protocols. DriveWire measured 2026-11-23 (`Measure_MemoryOverManyBatches`,
+      150 rounds of 32 clients): memory rises for the first ~16 rounds, then stays level; two memory dumps (round 20
+      and round 149, dotnet-gcdump) show RetroIO's own objects at exactly 54,424 bytes both times.
 - [ ] Hot paths reviewed for allocations (Span, ArrayPool, stackalloc).
 - [ ] Deep security review of the whole server: every listener, every parser of network input, logins,
       paths (traversal), passwords, TLS, the admin API. Every finding fixed or in BUGS.md by name.
