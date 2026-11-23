@@ -72,8 +72,13 @@ Default ports, published only for the protocols you switch on:
 | XMSG node, programs (gRPC) | 5011 TCP |
 | Dial-up | 6400 TCP |
 
+## Checking an image
+
+`./eng/test-docker.ps1 -Tag retroserver:local` starts the image, waits up to 60 seconds for `/health`
+to answer `OK`, then removes the container and its data volume. The CI build (job `docker`) builds
+the image and runs this check on every push.
+
 ## Not done yet
 
-- No CI build of the image yet, and no test that starts it.
 - Windows-only parts have no Linux way yet: a certificate from the Windows certificate store, printing to
   a system printer, serial devices.

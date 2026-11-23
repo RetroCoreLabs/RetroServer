@@ -225,15 +225,14 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
 ### Phase 15 - run as a Docker container (an option)
 
 Started 2026-11-23: `docker/Dockerfile`, `eng/build-docker.ps1`, `/health`, and `docs/DOCKER.md` (how to run it,
-ports, what is missing). The image starts and answers `/health`. Still to do:
-- [ ] Build the image in CI.
+ports, what is missing). The image starts and answers `/health`; `eng/test-docker.ps1` checks that, and the CI job `docker` builds the
+image and runs it (job written 2026-11-23, not yet seen running on GitHub). Still to do:
 - [ ] Every listener binds to a configurable address: inside a container `127.0.0.1` cannot be reached from
       outside, so "localhost only" defaults need a container setting. The "no login on 127.0.0.1" rule must
       not open a hole there: a connection through Docker's port mapping does not come from 127.0.0.1.
 - [ ] Windows-only parts need a Linux way: certificates from a file (not only the Windows certificate store),
       printing to a file or PDF when there is no system printer, serial devices passed in with `--device`.
 - [ ] A health check and a clean stop on SIGTERM (the XMSG shutdown sequence must run, or D100's XMSG crashes).
-- [ ] A test that builds the image and starts it with every protocol off.
 
 
 

@@ -35,3 +35,30 @@ jobs:
         working-directory: src
       - run: dotnet test -c Release --no-build -nodeReuse:false --filter "Category!=Azure&Category!=ExternalTNFSD&Category!=RealNetwork&Category!=Manual&Category!=ProcessSpawn"
         working-directory: src
+
+  # The Linux container: build the image (eng/build-docker.ps1) and check that it starts and
+  # answers /health (eng/test-docker.ps1). Ubuntu runners have Docker and PowerShell.
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: src/global.json
+      - name: Check out RetroIO
+        uses: actions/checkout@v4
+        with:
+          repository: RetroCoreLabs/RetroIO
+          token: ${{ secrets.RETROIO_TOKEN }}
+          path: RetroIO
+      - name: Pack RetroIO into the local feed
+        shell: pwsh
+        run: ./RetroIO/src/eng/publish-local.ps1 -Feed "$env:GITHUB_WORKSPACE/../localfeed"
+      - name: Build the image
+        shell: pwsh
+        working-directory: src
+        run: ./eng/build-docker.ps1 -Tag retroserver:ci
+      - name: Start the image and wait for /health
+        shell: pwsh
+        working-directory: src
+        run: ./eng/test-docker.ps1 -Tag retroserver:ci
