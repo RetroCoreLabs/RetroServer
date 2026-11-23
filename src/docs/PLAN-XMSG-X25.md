@@ -231,8 +231,9 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
       5.9 MB at round 0 and at round 29, no session left. The first run seemed to grow 250 KB a round; a full dump
       showed that was NUnit keeping the test server's console log, not the server. TNFS measured 2026-11-23
       (`TnfsLoadTests.Measure_MemoryOverManyBatches`, 30 rounds of 32 clients): about 1.78 MB from round 5 to 29,
-      1.5 MB and 0 sessions once the cleanup pass has removed the sessions left by resent MOUNTs. Still to measure:
-      the XMSG hub, the XMSG node, dial-up.
+      1.5 MB and 0 sessions once the cleanup pass has removed the sessions left by resent MOUNTs. XMSG hub measured
+      2026-11-24 (`HubServerTests.Memory_ThirtyRounds...`, 16 machines a round): exactly 1,369,280 bytes from round 10
+      to 29, no member left. Still to measure: the XMSG node, dial-up.
 - [ ] Hot paths reviewed for allocations (Span, ArrayPool, stackalloc).
 - [ ] Deep security review of the whole server: every listener, every parser of network input, logins,
       paths (traversal), passwords, TLS, the admin API. Every finding fixed or in BUGS.md by name.
