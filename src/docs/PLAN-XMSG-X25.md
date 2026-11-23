@@ -191,8 +191,14 @@ Today `ChatServer` answers join, say, rename, leave, who, trunk hello and trunk 
 - [ ] One login for all protocols: each protocol checks the same RetroServer user and password where it can
       (XMSG file server, console, hub, dial-up PAP/CHAP, TNFS, Econet, AFP later); per-protocol details in
       the user profile.
-- [ ] Statistics for every protocol: one common shape (connections, users, bytes, requests, errors, uptime),
-      pushed live to RetroAdmin. DriveWire and XMSG have none today.
+- [ ] Telemetry for every part of RetroServer, ONE shape (rule from Ronny 2026-11-23): named metrics
+      with labels, like a perfmon counter list and like OpenTelemetry, and the log next to them, so an
+      OpenTelemetry export of metrics and logs later is one line in the host. The shared class is
+      `RetroTelemetry` in RetroIO.Server.Core (a .NET Meter plus a kept log that also goes to ILogger);
+      the API is `api/v1/telemetry/sources|metrics|log`. Names `retroio.<part>.<thing>`, OpenTelemetry
+      units (`By`, `s`, `{call}`), variants as labels (`direction=in`). Dial-up is on it (RetroIO
+      78a91e1). Still to move: TNFS, Econet, DriveWire, XMSG hub, XMSG node; then a RetroAdmin page
+      that shows any part's metrics and log; then the OpenTelemetry exporter as a setting, off by default.
 
 ### Phase 12 - X.25: routing, XOT, calls from the console
 
