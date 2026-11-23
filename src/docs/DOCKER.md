@@ -52,8 +52,13 @@ To send statistics and logs to an OpenTelemetry collector, set `Telemetry__OtlpE
 ## Listen addresses
 
 Inside a container, a service listening on `127.0.0.1` cannot be reached from outside it, even with the
-port published. Set each switched-on protocol's bind address to `0.0.0.0` (for example
-`DriveWire__BindAddress=0.0.0.0`) to reach it through a published port.
+port published. So the image sets the XMSG hub, DriveWire and dial-up to listen on `0.0.0.0`
+(`XmsgHub__BindAddress`, `DriveWire__BindAddress`, `DialUp__BindAddress`); each is still off until you
+switch it on. Checked 2026-11-23: the hub in a container answers a connection from the PC through a
+published port.
+
+The XMSG node's plug-in port stays on `127.0.0.1`: plug-in programs outside the container are not
+supported until that port has TLS and a login.
 
 A connection through Docker's port mapping does not come from `127.0.0.1` inside the container, so
 anything that trusts 127.0.0.1 more than other addresses treats those callers as remote.

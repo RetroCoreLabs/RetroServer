@@ -17,6 +17,11 @@ VOLUME /data
 # Tnfs__Enabled=true) switches it on.
 ENV Management__Urls=http://0.0.0.0:5000
 
+# The same for the protocol listeners that default to 127.0.0.1 (each still off until switched on).
+# The XMSG node's plug-in port (XmsgNode__ProgramBindAddress) stays on 127.0.0.1 on purpose: a plug-in
+# program from outside the container would need TLS and a login first (plan: "Plug-in XMSG servers").
+ENV XmsgHub__BindAddress=0.0.0.0     DriveWire__BindAddress=0.0.0.0     DialUp__BindAddress=0.0.0.0
+
 # The management API. The protocol ports are published as each one is switched on (docs/DOCKER.md).
 EXPOSE 5000
 
