@@ -224,18 +224,6 @@ Tested against the specs and `x25emu` (WSL) only; SINTRAN has never run over X.2
       (RetroIO tests `TnfsLoadTests`, `EconetLoadTests`, `DriveWireLoadTests`, category Load, run by name): 32 TNFS
       clients, 3,200 requests in about 1 s; 16 Econet stations, 960 login/load/bye steps in 3.3 s; 32 DriveWire
       clients, 3,200 sector transfers in 86 ms. All answered right, no session left.
-- [ ] Memory over a long run for the other protocols. DriveWire measured 2026-11-23 (`Measure_MemoryOverManyBatches`,
-      150 rounds of 32 clients): memory rises for the first ~16 rounds, then stays level; two memory dumps (round 20
-      and round 149, dotnet-gcdump) show RetroIO's own objects at exactly 54,424 bytes both times.
-      Econet measured 2026-11-23 (`EconetLoadTests.Measure_MemoryOverManyBatches`, 30 rounds of 16 stations): level,
-      5.9 MB at round 0 and at round 29, no session left. The first run seemed to grow 250 KB a round; a full dump
-      showed that was NUnit keeping the test server's console log, not the server. TNFS measured 2026-11-23
-      (`TnfsLoadTests.Measure_MemoryOverManyBatches`, 30 rounds of 32 clients): about 1.78 MB from round 5 to 29,
-      1.5 MB and 0 sessions once the cleanup pass has removed the sessions left by resent MOUNTs. XMSG hub measured
-      2026-11-24 (`HubServerTests.Memory_ThirtyRounds...`, 16 machines a round): exactly 1,369,280 bytes from round 10
-      to 29, no member left. XMSG node measured 2026-11-24
-      (`XmsgNodeServiceTests.Memory_TwentyRounds...`, 8 chat programs a round): about 2.95 MB from round 1 to 19,
-      only the chat server's connection left after each round. Still to measure: dial-up.
 - [ ] Hot paths reviewed for allocations (Span, ArrayPool, stackalloc).
 - [ ] Deep security review of the whole server: every listener, every parser of network input, logins,
       paths (traversal), passwords, TLS, the admin API. Every finding fixed or in BUGS.md by name.
