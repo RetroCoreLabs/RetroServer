@@ -241,6 +241,19 @@ image and runs it (job written 2026-11-23, not yet seen running on GitHub). Stil
 - [ ] The XMSG node's shutdown (log TAD users out, then close the links) seen running on `docker stop` with a
       machine connected. Checked 2026-11-23 without one: `docker stop` ends RetroServer with exit code 0 in about
       1 s, the hub logs that it stopped, and `/health` exists.
+- [ ] Full test of every server scenario while RetroServer runs in Docker (Ronny, 2026-11-24). Today only
+      start, `/health`, `--version` and `docker stop` are tested in a container. Through Docker's port mapping,
+      from outside the container: TNFS (mount, list, read, write), Econet (login, load, save), DriveWire (read and
+      write sectors), the XMSG hub (a machine joins and frames go both ways), the XMSG node and a plug-in program,
+      dial-up (a call, a login, an address), and the management side: RetroAdmin signs in, shows the server's
+      version, reads and changes settings, users and the firewall page, and the live log and statistics arrive.
+      Settings and users must survive a container restart (the `/data` volume). Each scenario an automated test
+      that starts the image, runs, and removes the container and volume afterwards.
+- [ ] After that: publish the image to Docker Hub. A release build pushes a tagged image (the version from the
+      git tag, plus `latest`), the account and its token kept as a GitHub secret, never in the repository.
+      Write the Docker Hub page (what RetroServer is, `docker run` with the ports and the `/data` volume, the
+      settings it reads, `/health` and `/version`, how to stop it safely), and update `docs/DOCKER.md` and the
+      READMEs in this repository to say where the image is and how to pull it.
 
 
 
