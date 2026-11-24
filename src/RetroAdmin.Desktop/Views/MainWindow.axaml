@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
         x:Class="RetroAdmin.Desktop.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="RetroFS Server UI"
+        Title="RetroAdmin"
         Icon="/Assets/RetroServe-icon.png"
         Width="1400" Height="900"
         Background="{DynamicResource RetroFSBackgroundBrush}">

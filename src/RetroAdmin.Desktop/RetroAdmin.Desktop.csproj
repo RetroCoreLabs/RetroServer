@@ -45,4 +45,9 @@
     <PackageReference Include="RetroIO.Management.Contracts" />
     <PackageReference Include="RetroIO.Management.Client" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Its own build stamp for the sign-in window: the same file the service uses, internal in each. -->
+    <Compile Include="..\RetroServer.Service\BuildIdentity.cs" Link="BuildIdentity.cs" />
+  </ItemGroup>
+
 </Project>

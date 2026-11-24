@@ -86,7 +86,7 @@ public sealed class WindowsServiceLifecycleController : IServerLifecycleControll
             {
                 5 => ServerControlResult.Fail(ServerControlOutcome.RequiresElevation,
                     $"Controlling service '{_serviceName}' needs administrator rights. " +
-                    "Run RetroServe as administrator, or start the service from Services.msc."),
+                    "Run RetroAdmin as administrator, or start the service from Services.msc."),
 
                 1060 => ServerControlResult.Fail(ServerControlOutcome.Failed,
                     $"No service named '{_serviceName}' is installed. " +

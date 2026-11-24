@@ -29,7 +29,7 @@ namespace RetroServer.Service;
 /// Every value falls back to "unknown". A missing stamp is a small loss of information; an
 /// exception while reporting who you are would take the whole server down at start.
 /// </remarks>
-public static class BuildIdentity
+internal static class BuildIdentity
 {
     /// <summary>
     /// What a value reads when the build did not record it.
@@ -197,8 +197,16 @@ public static class BuildIdentity
     /// </summary>
     public static string Describe()
     {
+        return Describe("RetroServer");
+    }
+
+    /// <summary>The same line with another program's name, for RetroAdmin, which compiles this file in too.</summary>
+    /// <param name="product">The program's name, for example "RetroAdmin".</param>
+    /// <returns>One line: name, version, commit, branch, uncommitted changes and build date.</returns>
+    public static string Describe(string product)
+    {
         var dirty = IsDirty ? " (uncommitted changes)" : string.Empty;
-        return $"RetroServer {Version}, commit {Commit} on {Branch}{dirty}, built {BuildDate} {BuildTime}";
+        return $"{product} {Version}, commit {Commit} on {Branch}{dirty}, built {BuildDate} {BuildTime}";
     }
 
     /// <summary>

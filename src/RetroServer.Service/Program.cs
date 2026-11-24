@@ -111,6 +111,11 @@ public class Program
         // needed and nothing about the server given away (docs/DOCKER.md).
         app.MapGet("/health", () => "OK").AllowAnonymous();
 
+        // Which build this is, the same line as --version, so RetroAdmin's sign-in window can show
+        // the server's version before anyone has signed in (Ronny, 2026-11-24). It names the
+        // version and commit and nothing else - no configuration, users or paths.
+        app.MapGet("/version", () => BuildIdentity.Describe()).AllowAnonymous();
+
         await RetroIdpBootstrap.InitializeAsync(app.Services);
         await EconetUserBootstrap.EnsureProfilesAsync(app.Services.GetRequiredService<RetroIO.Identity.IRetroIDP>());
 

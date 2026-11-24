@@ -318,6 +318,54 @@ public class ManagementConnectionIntegrationTests
         });
 
     [Test]
+    public async Task ServerBuild_IsReadWithoutSigningIn_AndNamesRetroServer()
+    {
+        // The sign-in window shows this before anyone has signed in (Ronny, 2026-11-24).
+        await using ManagementConnection connection = Connect();
+
+        string? build = await connection.GetServerBuildAsync();
+
+        Assert.That(build, Is.Not.Null, "the server did not answer GET /version");
+        Assert.That(build, Does.StartWith("RetroServer "));
+        Assert.That(build, Does.Contain(", commit "));
+        Assert.That(build, Does.Contain(", built "));
+    }
+
+    [Test]
+    public async Task ChangeAddress_ToSomethingThatIsNotAnAddress_IsRefusedInWords_AndTheOldAddressStays()
+    {
+        await using ManagementConnection connection = Connect();
+
+        string? refused = await connection.ChangeAddressAsync("localhost 5111");
+
+        Assert.That(refused, Does.Contain("is not a server address"));
+        Assert.That(connection.Settings.Address, Is.EqualTo(TestApiAddress));
+    }
+
+    [Test]
+    public async Task ChangeAddress_IsReallyUsed_ByTheNextProbe()
+    {
+        // Until 2026-11-24 the address typed in the sign-in window was ignored: the client kept the
+        // address it was built with. Start pointed at nothing, move to the real server, probe.
+        await using ManagementConnection connection = new ManagementConnection(
+            new ServerConnectionSettings
+            {
+                Mode = ServerConnectionMode.Remote,
+                Address = "https://localhost:5099",
+                AllowUntrustedCertificate = true
+            });
+        Assert.That((await connection.ProbeAsync()).ServerPresent, Is.False, "nothing should answer on 5099");
+
+        Assert.That(await connection.ChangeAddressAsync(TestApiAddress + "/"), Is.Null);
+        ReachabilityResult probe = await connection.ProbeAsync();
+
+        Assert.That(connection.Settings.Address, Is.EqualTo(TestApiAddress), "the trailing / is taken off");
+        Assert.That(probe.ServerPresent, Is.True, probe.Message);
+        ConnectionResult signedIn = await connection.ConnectAsync(AdminUser, AdminPassword);
+        Assert.That(signedIn.Connected, Is.True, signedIn.Message);
+    }
+
+    [Test]
     public async Task Connect_WithTheAdminAccount_Succeeds()
     {
         await using ManagementConnection connection = Connect();

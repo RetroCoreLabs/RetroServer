@@ -1,10 +1,10 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:RetroAdmin.Desktop.ViewModels"
         x:Class="RetroAdmin.Desktop.Views.LoginWindow"
         x:DataType="vm:LoginViewModel"
-        Title="RetroServe — Connect"
-        Width="500" Height="440"
+        Title="RetroAdmin — Sign in to RetroServer"
+        Width="500" Height="500"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
         Background="{DynamicResource RetroFSBackgroundBrush}">
@@ -27,7 +27,7 @@
   <Window.Styles>
 
     <!--
-         NO button styles here. RetroServeUI already defines the canonical dialog buttons in
+         NO button styles here. RetroAdmin already defines the canonical dialog buttons in
          Styles/FluentTheme.axaml: Button.dialog-primary for the confirm action and
          Button.dialog-secondary for the neutral one. Every other dialog in the app uses them.
 
@@ -90,7 +90,22 @@
 
   </Window.Styles>
 
+  <!-- Enter connects, or signs in once the name and password are showing. Until 2026-11-24 Enter
+       did nothing at all, and a press that does nothing reads as a hung window. -->
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Enter" Command="{Binding EnterCommand}"/>
+  </Window.KeyBindings>
+
   <DockPanel Margin="28">
+
+    <!-- Status bar, the very bottom: which RetroAdmin this is, from the start, and which
+         RetroServer answered, once one has. -->
+    <StackPanel DockPanel.Dock="Bottom" Spacing="2" Margin="2,10,0,0">
+      <TextBlock Text="{Binding LocalBuild}" FontSize="11" TextWrapping="Wrap"
+                 Foreground="{DynamicResource RetroFSGrayBrush}"/>
+      <TextBlock Text="{Binding ServerBuild}" FontSize="11" TextWrapping="Wrap"
+                 Foreground="{DynamicResource RetroFSGrayBrush}"/>
+    </StackPanel>
 
     <!-- Docked bottom, so the result sits under the controls that produced it. -->
     <Border DockPanel.Dock="Bottom"
@@ -113,17 +128,18 @@
     <StackPanel DockPanel.Dock="Top" Spacing="14">
 
       <StackPanel Spacing="2">
-        <TextBlock Text="RetroServe"
+        <TextBlock Text="RetroAdmin"
                    FontSize="26" FontWeight="Bold"
                    Foreground="{DynamicResource RetroFSWhiteBrush}"/>
-        <TextBlock Text="Connect to a RetroFS server"
+        <TextBlock Text="Sign in to RetroServer"
                    FontSize="13"
                    Foreground="{DynamicResource RetroFSLightGrayBrush}"/>
       </StackPanel>
 
       <StackPanel Spacing="4">
         <TextBlock Text="SERVER ADDRESS" Classes="label"/>
-        <TextBox Text="{Binding Address}" IsEnabled="{Binding ShowConnect}"/>
+        <!-- Always editable: a changed address sends the window back to Connect (LoginViewModel). -->
+        <TextBox Text="{Binding Address}"/>
         <TextBlock Text="{Binding ConnectionDescription}"
                    FontSize="11"
                    Foreground="{DynamicResource RetroFSGrayBrush}"
@@ -166,7 +182,7 @@
                 Height="42"
                 FontSize="14"/>
 
-        <Button Content="Sign in"
+        <Button Content="{Binding SignInButtonText}"
                 Classes="dialog-primary"
                 Command="{Binding SignInCommand}"
                 IsVisible="{Binding ShowCredentials}"

@@ -1,4 +1,4 @@
-﻿//
+//
 // SPDX-License-Identifier: MIT
 // Copyright (c) 1985-2026 Ronny Hansen
 // RetroCore Labs — https://github.com/RetroCoreLabs
@@ -87,14 +87,16 @@ public sealed class ManagementConnection : IAsyncDisposable
 {
     private readonly ServerConnectionSettings _settings;
 
+    private readonly bool _savesSettings;
+
     /// <summary>REST client for the management API.</summary>
-    public ManagementApiClient Api { get; }
+    public ManagementApiClient Api { get; private set; }
 
     /// <summary>Live push channel. Only connected after a successful login.</summary>
-    public ManagementHubClient Hub { get; }
+    public ManagementHubClient Hub { get; private set; }
 
     /// <summary>Starts and stops the server, when the mode allows it.</summary>
-    public IServerLifecycleController Lifecycle { get; }
+    public IServerLifecycleController Lifecycle { get; private set; }
 
     /// <summary>Settings this connection was built from.</summary>
     public ServerConnectionSettings Settings => _settings;
@@ -129,20 +131,110 @@ public sealed class ManagementConnection : IAsyncDisposable
     {
         _settings = settings ?? ServerConnectionSettings.Instance;
 
-        Api = new ManagementApiClient(_settings.Address, _settings.AllowUntrustedCertificate);
+        // Only the program's own saved settings are written back. A connection given its own
+        // settings (every test) must never overwrite the user's saved address.
+        _savesSettings = settings == null;
+        (Api, Hub, Lifecycle) = Build(_settings);
+    }
+
+    // Controllers replaced by ChangeAddressAsync. Kept, not disposed, until this connection is:
+    // disposing a subprocess controller kills the server it started, and pointing the window at
+    // another address must not stop a server the user started a moment ago.
+    private readonly System.Collections.Generic.List<IServerLifecycleController> _retiredLifecycles =
+        new System.Collections.Generic.List<IServerLifecycleController>();
+
+    private (ManagementApiClient, ManagementHubClient, IServerLifecycleController) Build(ServerConnectionSettings settings)
+    {
+        ManagementApiClient api = new ManagementApiClient(settings.Address, settings.AllowUntrustedCertificate);
 
         // The token is read through a delegate, not captured, so a reconnect after the token was
         // renewed presents the current one rather than the one that existed at construction.
-        Hub = new ManagementHubClient(
-            _settings.Address,
-            _settings.AllowUntrustedCertificate,
+        ManagementHubClient hub = new ManagementHubClient(
+            settings.Address,
+            settings.AllowUntrustedCertificate,
             () => Api.AccessToken);
 
-        Lifecycle = ServerLifecycleControllerFactory.Create(_settings);
+        IServerLifecycleController lifecycle = ServerLifecycleControllerFactory.Create(settings);
 
-        Api.RequestFailed += (operation, ex) => StatusChanged?.Invoke($"{operation} failed: {ex.Message}");
-        Hub.ConnectionStateChanged += (state, ex) =>
+        api.RequestFailed += (operation, ex) => StatusChanged?.Invoke($"{operation} failed: {ex.Message}");
+        hub.ConnectionStateChanged += (state, ex) =>
             StatusChanged?.Invoke(ex == null ? $"Live updates {state}." : $"Live updates {state}: {ex.Message}");
+        return (api, hub, lifecycle);
+    }
+
+    /// <summary>
+    /// Points the connection at another server address and, for the program's own settings, saves it for the next start.
+    /// </summary>
+    /// <param name="address">The new address, for example https://localhost:5001.</param>
+    /// <returns>Null when the address was taken, else why it was refused, in words for the user.</returns>
+    /// <remarks>
+    /// Until 2026-11-24 the sign-in window let the user type an address and then went on using the
+    /// one read at start: the client was built once in the constructor, so editing the box did
+    /// nothing. Any token and live connection belong to the old server and are dropped.
+    /// </remarks>
+    public async Task<string?> ChangeAddressAsync(string address)
+    {
+        string trimmed = (address ?? string.Empty).Trim().TrimEnd('/');
+        if (!Uri.TryCreate(trimmed, UriKind.Absolute, out Uri? uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            return $"\"{address}\" is not a server address. Write it like https://localhost:5001.";
+        }
+
+        if (string.Equals(trimmed, _settings.Address, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        await Hub.DisposeAsync().ConfigureAwait(false);
+        Api.Dispose();
+        _retiredLifecycles.Add(Lifecycle);
+        Username = string.Empty;
+
+        _settings.Address = trimmed;
+        if (_savesSettings)
+        {
+            _settings.Save();
+        }
+        (Api, Hub, Lifecycle) = Build(_settings);
+        StatusChanged?.Invoke($"Server address changed to {trimmed}.");
+        return null;
+    }
+
+    /// <summary>
+    /// Asks the server which build it is (GET /version, no login needed).
+    /// </summary>
+    /// <returns>The server's own one-line description, or null when it did not say.</returns>
+    /// <remarks>
+    /// Null also for a RetroServer older than 2026-11-24, which has no /version. The caller shows
+    /// "unknown" then, never a guess.
+    /// </remarks>
+    public async Task<string?> GetServerBuildAsync()
+    {
+        try
+        {
+            using System.Net.Http.HttpClientHandler handler = new System.Net.Http.HttpClientHandler();
+            if (_settings.AllowUntrustedCertificate)
+            {
+                handler.ServerCertificateCustomValidationCallback =
+                    System.Net.Http.HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            }
+
+            using System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(handler) { Timeout = TimeSpan.FromSeconds(5) };
+            using System.Net.Http.HttpResponseMessage response =
+                await client.GetAsync(_settings.Address + "/version").ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            string text = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Trim();
+            return text.StartsWith("RetroServer ", StringComparison.Ordinal) ? text : null;
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException || ex is TaskCanceledException)
+        {
+            return null;
+        }
     }
 
     /// <summary>
@@ -176,7 +268,7 @@ public sealed class ManagementConnection : IAsyncDisposable
 
             case ManagementApiClient.ProbeResult.NotRetroFs:
                 return new ReachabilityResult(Reachability.NotRetroFs,
-                    $"Something is answering at {_settings.Address}, but it is not a RetroFS server.");
+                    $"Something is answering at {_settings.Address}, but it is not a RetroServer.");
 
             default:
                 return new ReachabilityResult(Reachability.NoServer,
@@ -199,7 +291,7 @@ public sealed class ManagementConnection : IAsyncDisposable
         if (response == null)
         {
             return new ConnectionResult(ConnectionOutcome.Unreachable,
-                $"Could not reach a RetroFS server at {_settings.Address}.");
+                $"Could not reach a RetroServer at {_settings.Address}.");
         }
 
         if (!response.Success || response.Data == null)
@@ -254,5 +346,9 @@ public sealed class ManagementConnection : IAsyncDisposable
         // Disposing the subprocess controller kills the server it started, so closing the UI does
         // not leave one behind holding the TNFS and Econet ports.
         (Lifecycle as IDisposable)?.Dispose();
+        for (int i = 0; i < _retiredLifecycles.Count; i++)
+        {
+            (_retiredLifecycles[i] as IDisposable)?.Dispose();
+        }
     }
 }

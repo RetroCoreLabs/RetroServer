@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RetroAdmin.Desktop.Services.ServerControl;
+using RetroServer.Service;
 
 namespace RetroAdmin.Desktop.ViewModels;
 
@@ -51,18 +52,19 @@ public partial class LoginViewModel : ViewModelBase
     /// The view model must not pick colours: the app has eight themes and a hardcoded one would
     /// stop following whichever is live.
     /// </remarks>
-    public bool IsProblem => State is Reachability.NoServer
+    public bool IsProblem => IsSignInRefused
+                             || State is Reachability.NoServer
                                    or Reachability.NotRetroFs
                                    or Reachability.CertificateRejected;
 
     /// <summary>True when a RetroFS server answered.</summary>
-    public bool IsFound => State is Reachability.NeedsCredentials or Reachability.Ready;
+    public bool IsFound => !IsSignInRefused && (State is Reachability.NeedsCredentials or Reachability.Ready);
 
     /// <summary>One-line headline for the status strip.</summary>
-    public string StateHeadline => State switch
+    public string StateHeadline => IsSignInRefused ? "Sign-in refused" : State switch
     {
         Reachability.NoServer => "No server found",
-        Reachability.NotRetroFs => "Not a RetroFS server",
+        Reachability.NotRetroFs => "Not a RetroServer",
         Reachability.CertificateRejected => "Certificate refused",
         Reachability.NeedsCredentials => "Server found — sign in",
         Reachability.Ready => "Connected",
@@ -98,6 +100,7 @@ public partial class LoginViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsProblem))]
     [NotifyPropertyChangedFor(nameof(IsFound))]
     [NotifyPropertyChangedFor(nameof(ConnectButtonText))]
+    [NotifyPropertyChangedFor(nameof(SignInButtonText))]
     private bool _isBusy;
 
     /// <summary>Label on the primary connect button.</summary>
@@ -108,6 +111,16 @@ public partial class LoginViewModel : ViewModelBase
     /// work in progress.
     /// </remarks>
     public string ConnectButtonText => IsBusy ? "Connecting..." : "Connect";
+
+    /// <summary>The Sign in button's text: says when it is working, so a press never looks ignored.</summary>
+    public string SignInButtonText => IsBusy ? "Signing in..." : "Sign in";
+
+    /// <summary>This program's build, shown from the moment the window opens.</summary>
+    public string LocalBuild { get; } = BuildIdentity.Describe("RetroAdmin");
+
+    /// <summary>The server's build once it has answered, else what is known about it.</summary>
+    [ObservableProperty]
+    private string _serverBuild = "RetroServer: not connected yet";
 
     /// <summary>Raised once signed in and the shell may open.</summary>
     public event Action? Connected;
@@ -136,12 +149,26 @@ public partial class LoginViewModel : ViewModelBase
 
         try
         {
+            // The address in the box is the one used. Until 2026-11-24 it was not: the
+            // connection kept the address read at start, so typing a new one did nothing.
+            string? refused = await _connection.ChangeAddressAsync(Address);
+            if (refused != null)
+            {
+                State = Reachability.NoServer;
+                StatusMessage = refused;
+                return;
+            }
+
+            Address = _connection.Settings.Address;
+            ConnectionDescription = _connection.Lifecycle.Description;
             StatusMessage = $"Looking for a server at {Address}...";
+            ServerBuild = "RetroServer: looking...";
 
             ReachabilityResult result = await _connection.ProbeAsync();
 
             State = result.State;
             StatusMessage = result.Message;
+            await ShowServerBuildAsync(result.ServerPresent);
 
             // Already holding a usable token: nothing to ask for.
             if (result.State == Reachability.Ready) Connected?.Invoke();
@@ -189,6 +216,7 @@ public partial class LoginViewModel : ViewModelBase
                 {
                     State = probe.State;
                     StatusMessage = probe.Message;
+                    await ShowServerBuildAsync(true);
                     if (probe.State == Reachability.Ready) Connected?.Invoke();
                     return;
                 }
@@ -225,14 +253,20 @@ public partial class LoginViewModel : ViewModelBase
         }
 
         IsBusy = true;
+        IsSignInRefused = false;
 
         try
         {
-            StatusMessage = "Signing in...";
+            StatusMessage = $"Signing in as {Username} at {Address}...";
 
             ConnectionResult result = await _connection.ConnectAsync(Username, Password);
 
             StatusMessage = result.Message;
+            if (!result.Connected)
+            {
+                // The server answered with a refusal: say it in the headline too, not only below.
+                IsSignInRefused = true;
+            }
 
             if (result.Connected) Connected?.Invoke();
         }
@@ -240,5 +274,53 @@ public partial class LoginViewModel : ViewModelBase
         {
             IsBusy = false;
         }
+    }
+
+    /// <summary>True after a sign-in the server refused, until the next attempt or a new address.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsProblem))]
+    [NotifyPropertyChangedFor(nameof(StateHeadline))]
+    [NotifyPropertyChangedFor(nameof(IsFound))]
+    private bool _isSignInRefused;
+
+    /// <summary>
+    /// Enter in the window: signs in when the name and password are showing, else connects.
+    /// </summary>
+    /// <returns>The command's work.</returns>
+    [RelayCommand]
+    private Task EnterAsync()
+    {
+        return ShowCredentials ? SignIn() : ConnectAsync();
+    }
+
+    partial void OnAddressChanged(string value)
+    {
+        // A new address belongs to a server nobody has asked yet: back to the Connect stage, so
+        // the name and password are never sent to an address that was not checked first.
+        if (State == Reachability.NeedsCredentials &&
+            !string.Equals((value ?? string.Empty).Trim().TrimEnd('/'), _connection.Settings.Address, StringComparison.OrdinalIgnoreCase))
+        {
+            State = Reachability.NoServer;
+            IsSignInRefused = false;
+            StatusMessage = "The address changed. Press Connect (or Enter) to look for a server there.";
+            ServerBuild = "RetroServer: not connected yet";
+        }
+    }
+
+    partial void OnPasswordChanged(string value)
+    {
+        IsSignInRefused = false;
+    }
+
+    private async Task ShowServerBuildAsync(bool present)
+    {
+        if (!present)
+        {
+            ServerBuild = "RetroServer: no answer";
+            return;
+        }
+
+        string? build = await _connection.GetServerBuildAsync();
+        ServerBuild = build ?? "RetroServer: version unknown (an older server, without /version)";
     }
 }

@@ -157,7 +157,7 @@ public partial class FirewallViewModel : ViewModelBase
                 IPCondition = NewIpAddress,
                 Action = SelectedAction,
                 Priority = NewRulePriority,
-                Description = "Created via RetroServe",
+                Description = "Created via RetroAdmin",
                 Enabled = true
             });
 
