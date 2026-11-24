@@ -26,6 +26,10 @@ docker stop -t 30 retroserver
   state files, served folders and logs. Mount a volume or a folder there, or the data goes with the
   container.
 - **Health check:** `GET /health` on the management port answers `OK` with no login.
+- **Which build is running:** `GET /version` on the management port answers with no login, with one line such as
+  `RetroServer 0.1.0, commit 02bda36ecdac on main, built 24.Nov.2026 11:34:14`. It names the version, commit,
+  branch and build date, and nothing about the configuration. `docker run --rm retroserver:local --version`
+  prints the same line without starting the server.
 - **Stopping:** `docker stop` sends SIGTERM, which stops RetroServer's services in order. The XMSG node
   must log its TAD users out before its links close, or a real SINTRAN machine's XMSG can crash, so give
   it time with `-t 30`.
