@@ -13,13 +13,11 @@ jobs:
           global-json-file: src/global.json
       # RetroServer references the RetroIO packages as 0.1.0-local.*, which exist only in a local
       # folder feed. Build them here, into the folder src/nuget.config points at (the parent of
-      # the workspace, beside it). RetroIO is private, so the checkout needs RETROIO_TOKEN: a
-      # fine-grained personal access token with read access to the RetroIO repository's contents.
+      # the workspace, beside it). RetroIO is public, so the checkout needs no token.
       - name: Check out RetroIO
         uses: actions/checkout@v4
         with:
           repository: RetroCoreLabs/RetroIO
-          token: ${{ secrets.RETROIO_TOKEN }}
           path: RetroIO
 
       - name: Pack RetroIO into the local feed
@@ -49,7 +47,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: RetroCoreLabs/RetroIO
-          token: ${{ secrets.RETROIO_TOKEN }}
           path: RetroIO
       - name: Pack RetroIO into the local feed
         shell: pwsh
