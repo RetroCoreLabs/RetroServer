@@ -12,7 +12,90 @@
     <Company>RetroCoreLabs</Company>
     <Copyright>Copyright (c) 1985-$([System.DateTime]::Now.Year) Ronny Hansen</Copyright>
     <IsPackable>false</IsPackable>
+
+    <!-- Build date and time, read back by BuildIdentity (the same mechanism as RetroTerm). -->
+    <CurrentDate>$([System.DateTime]::Now.ToString("dd.MMM.yyyy"))</CurrentDate>
+    <CurrentTime>$([System.DateTime]::Now.ToString("HH:mm:ss"))</CurrentTime>
   </PropertyGroup>
+
+  <!-- Embed build date/time as assembly metadata -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildDate</_Parameter1>
+      <_Parameter2>$(CurrentDate)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildTime</_Parameter1>
+      <_Parameter2>$(CurrentTime)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <!-- Git identity, stamped into every assembly.
+
+       WHY: copied from RetroTerm (2026-11-24, Ronny). There, two copies ran from one folder and
+       nothing showed which code each one was. A stale binary that passes is worse than one that
+       fails. BuildDate and BuildTime above answer "when"; these answer "which code".
+
+       Captured in a TARGET rather than the ItemGroup above because MSBuild evaluates properties
+       before any target runs, so an Exec's output cannot reach a static ItemGroup. This one adds
+       the attributes itself, just before the compiler is asked for them.
+
+       Every step tolerates git being absent or this not being a checkout - a build must not fail
+       because somebody unzipped the source. The values then read "unknown", which is honest. -->
+  <Target Name="CaptureGitIdentity" BeforeTargets="GetAssemblyAttributes">
+
+    <Exec Command="git rev-parse --short=12 HEAD"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="low"
+          ContinueOnError="true"
+          IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCommitCaptured" />
+    </Exec>
+
+    <Exec Command="git rev-parse --abbrev-ref HEAD"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="low"
+          ContinueOnError="true"
+          IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitBranchCaptured" />
+    </Exec>
+
+    <!-- Any output at all means something is uncommitted, which is the whole question a stamp
+         has to answer: the hash alone would claim a clean tree that is not there. -->
+    <Exec Command="git status --porcelain"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="low"
+          ContinueOnError="true"
+          IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitStatusCaptured" />
+    </Exec>
+
+    <PropertyGroup>
+      <GitCommit Condition="'$(GitCommitCaptured)' != ''">$(GitCommitCaptured.Trim())</GitCommit>
+      <GitCommit Condition="'$(GitCommit)' == ''">unknown</GitCommit>
+
+      <GitBranch Condition="'$(GitBranchCaptured)' != ''">$(GitBranchCaptured.Trim())</GitBranch>
+      <GitBranch Condition="'$(GitBranch)' == ''">unknown</GitBranch>
+
+      <GitDirty Condition="'$(GitStatusCaptured.Trim())' != ''">true</GitDirty>
+      <GitDirty Condition="'$(GitDirty)' == ''">false</GitDirty>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>GitCommit</_Parameter1>
+        <_Parameter2>$(GitCommit)</_Parameter2>
+      </AssemblyAttribute>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>GitBranch</_Parameter1>
+        <_Parameter2>$(GitBranch)</_Parameter2>
+      </AssemblyAttribute>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>GitDirty</_Parameter1>
+        <_Parameter2>$(GitDirty)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

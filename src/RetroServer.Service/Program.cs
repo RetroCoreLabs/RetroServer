@@ -36,6 +36,13 @@ public class Program
             return 0;
         }
 
+        // --version: which build this is, and nothing else started (the same rule as --help).
+        if (WantsVersion(args))
+        {
+            Console.WriteLine(BuildIdentity.Describe());
+            return 0;
+        }
+
         if (TryGetServiceCommand(args, out string command))
         {
             return WindowsServiceInstaller.Run(command);
@@ -107,11 +114,15 @@ public class Program
         await RetroIdpBootstrap.InitializeAsync(app.Services);
         await EconetUserBootstrap.EnsureProfilesAsync(app.Services.GetRequiredService<RetroIO.Identity.IRetroIDP>());
 
+        // Which build is running, in the log as well, since a service has no console for the banner.
+        app.Logger.LogInformation("{Build}", BuildIdentity.Describe());
+
         if (options.PrintBanners)
         {
             ConsoleBox.Top();
             ConsoleBox.Title("RetroFS Management API");
             ConsoleBox.Divider();
+            ConsoleBox.LabelValue("  Build:             ", BuildIdentity.Short);
             for (int i = 0; i < managementUrls.Length; i++)
             {
                 ConsoleBox.LabelValue($"  URL {i + 1}:             ", managementUrls[i]);
@@ -174,6 +185,24 @@ public class Program
             if (string.Equals(args[i], "--uninstall", StringComparison.OrdinalIgnoreCase))
             {
                 command = "uninstall";
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// True when the command line asks for the build identity rather than a server run.
+    /// </summary>
+    /// <param name="args">Raw command line arguments.</param>
+    /// <returns>True for --version.</returns>
+    private static bool WantsVersion(string[] args)
+    {
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (string.Equals(args[i], "--version", StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
             }
         }
@@ -285,6 +314,7 @@ public class Program
     private static void PrintHelp()
     {
         Console.WriteLine("RetroServer -- TNFS, Econet, DriveWire and XMSG Ethernet hub server for retro computers.");
+        Console.WriteLine(BuildIdentity.Describe());
         Console.WriteLine();
         Console.WriteLine("USAGE");
         Console.WriteLine("  RetroServer [options]");
@@ -296,6 +326,7 @@ public class Program
         Console.WriteLine();
         Console.WriteLine("OPTIONS");
         Console.WriteLine("  --help, -h, /?                  Show this text and exit.");
+        Console.WriteLine("  --version                       Show the version, git commit, branch and build date, and exit.");
         Console.WriteLine();
         Console.WriteLine("  --Management:Urls=<url;url>     Management API addresses. (default http://localhost:5000;https://localhost:5001)");
         Console.WriteLine("  --Management:Swagger=true|false The API description page /swagger. (default true)");

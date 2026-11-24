@@ -29,6 +29,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\RetroAdmin.Desktop\RetroAdmin.Desktop.csproj" />
+    <!-- BuildIdentityTests: the service's BuildIdentity compiled in here. Not a reference to the
+         service: that pulls in Microsoft.Extensions.Logging 10 against the 9.0.21 pinned here.
+         This assembly is stamped by the same CaptureGitIdentity target, so the test reads a real stamp. -->
+    <Compile Include="..\..\RetroServer.Service\BuildIdentity.cs" Link="BuildIdentity.cs" />
   </ItemGroup>
 
 </Project>
