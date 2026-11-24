@@ -10,7 +10,7 @@ using System.Reflection;
 namespace RetroAdmin.Desktop.Tests;
 
 /// <summary>
-/// Enforces that RetroServeUI stays a management client.
+/// Enforces that RetroAdmin stays a management client.
 /// </summary>
 /// <remarks>
 /// The UI used to reference the protocol servers, the identity store and the security engines so
@@ -38,7 +38,7 @@ public class ClientDependencyTests
     };
 
     [Test]
-    public void RetroServeUI_ReferencesNoServerAssemblies()
+    public void RetroAdmin_ReferencesNoServerAssemblies()
     {
         Assembly ui = typeof(RetroAdmin.Desktop.App).Assembly;
         AssemblyName[] references = ui.GetReferencedAssemblies();
@@ -50,7 +50,7 @@ public class ClientDependencyTests
             for (int f = 0; f < ForbiddenReferences.Length; f++)
             {
                 Assert.That(name, Is.Not.EqualTo(ForbiddenReferences[f]),
-                    $"RetroServeUI references {name}. It is a management client: it talks to a " +
+                    $"RetroAdmin references {name}. It is a management client: it talks to a " +
                     "server over the management API and must depend only on " +
                     "RetroFS.Management.Contracts and RetroFS.Management.Client.");
             }
@@ -58,7 +58,7 @@ public class ClientDependencyTests
     }
 
     [Test]
-    public void RetroServeUI_StillReferencesTheContractAndTheClient()
+    public void RetroAdmin_StillReferencesTheContractAndTheClient()
     {
         // The other half of the rule: it must not shed these either, or it would have no way to
         // reach a server at all and the test above would pass vacuously.

@@ -15,7 +15,7 @@ using Avalonia.Styling;
 namespace RetroAdmin.Desktop.Themes
 {
     /// <summary>
-    /// Runtime theming for RetroServe, deliberately the SAME engine and the SAME eight themes
+    /// Runtime theming for RetroAdmin, deliberately the SAME engine and the SAME eight themes
     /// as RetroCommander and RetroTerm, so the suite offers one catalogue everywhere.
     /// </summary>
     /// <remarks>

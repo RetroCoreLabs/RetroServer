@@ -19,7 +19,7 @@ namespace RetroAdmin.Desktop;
 /// <summary>Application entry point and composition.</summary>
 /// <remarks>
 /// There is one mode now. The USE_REST_API conditional that used to pick between an in-process
-/// server and the REST API is gone, along with the in-process branch: RetroServeUI is a
+/// server and the REST API is gone, along with the in-process branch: RetroAdmin is a
 /// management client, and the server it manages is a separate process.
 /// </remarks>
 public partial class App : Application

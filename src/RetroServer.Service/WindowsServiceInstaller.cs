@@ -28,7 +28,7 @@ public static class WindowsServiceInstaller
     public const string ServiceName = "RetroServer";
 
     /// <summary>Name shown in the Services console.</summary>
-    private const string DisplayName = "RetroFS Server";
+    private const string DisplayName = "RetroServer";
 
     /// <summary>Description shown in the Services console.</summary>
     private const string Description =

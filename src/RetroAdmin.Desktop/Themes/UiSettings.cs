@@ -12,8 +12,8 @@ using System.Text.Json;
 namespace RetroAdmin.Desktop.Themes
 {
     /// <summary>
-    /// Persisted UI preferences for RetroServe, stored as a single JSON document at
-    /// %APPDATA%\RetroServe\ui-settings.json.
+    /// Persisted UI preferences for RetroAdmin, stored as a single JSON document at
+    /// %APPDATA%\RetroAdmin\ui-settings.json (copied from the old %APPDATA%\RetroServe once, see SettingsFolder).
     /// </summary>
     /// <remarks>
     /// Deliberately the same shape and the same load/save behaviour as RetroCommander's, so the
@@ -36,10 +36,7 @@ namespace RetroAdmin.Desktop.Themes
 
         private static string GetSettingsPath()
         {
-            string dir = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "RetroServe");
-            return Path.Combine(dir, "ui-settings.json");
+            return RetroAdmin.Desktop.Services.ServerControl.SettingsFolder.PathOf("ui-settings.json");
         }
 
         private static UiSettings Load()

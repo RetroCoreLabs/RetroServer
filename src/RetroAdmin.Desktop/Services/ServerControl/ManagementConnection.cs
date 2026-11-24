@@ -73,7 +73,7 @@ public readonly record struct ConnectionResult(ConnectionOutcome Outcome, string
 /// </summary>
 /// <remarks>
 /// This replaces RetroServerHost, which started the protocol servers inside the UI process. That
-/// arrangement made RetroServeUI a third independent copy of the server rather than a client of
+/// arrangement made RetroAdmin a third independent copy of the server rather than a client of
 /// one, and it is why the UI could only ever manage a server running on the same machine, in the
 /// same process.
 ///

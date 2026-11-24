@@ -42,7 +42,12 @@ public sealed class ServerConnectionSettings
     public const string DefaultAddress = "https://localhost:5001";
 
     /// <summary>Service name used by <c>RetroServer.exe --install</c>.</summary>
-    public const string DefaultServiceName = "RetroFSServer";
+    /// <remarks>
+    /// Must equal <c>WindowsServiceInstaller.ServiceName</c> in RetroServer.Service. Until
+    /// 2026-11-24 this said "RetroFSServer" while the installer registers "RetroServer", so
+    /// RetroAdmin's start and stop in Windows-service mode went to a service that did not exist.
+    /// </remarks>
+    public const string DefaultServiceName = "RetroServer";
 
     /// <summary>How the UI reaches the server.</summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -84,10 +89,7 @@ public sealed class ServerConnectionSettings
     /// <returns>Path to server-connection.json.</returns>
     public static string GetSettingsPath()
     {
-        string dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "RetroServe");
-        return Path.Combine(dir, "server-connection.json");
+        return SettingsFolder.PathOf("server-connection.json");
     }
 
     /// <summary>Reads the settings, falling back to defaults if anything is wrong with the file.</summary>

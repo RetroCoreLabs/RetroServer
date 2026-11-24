@@ -40,7 +40,7 @@ What you need:
 
 ```powershell
 # in the RetroIO clone
-powershell -File src\eng\publish-local.ps1
+pwsh -File src\eng\publish-local.ps1
 ```
 
 That packs every RetroIO package into `../localfeed` with a fresh timestamp. `nuget.config` in
@@ -97,6 +97,17 @@ breaks `MERMAID_COLOR_STANDARDS.md`.
 > repo-relative; a sibling repository is named, not located; anything outside is described. A
 > variable such as `%USERPROFILE%` or `~` is fine - that is the portable way to name a per-user
 > location.
+
+The same check runs first in the `build` workflow, so a failure here turns CI red.
+
+The documentation site (`src/docs-site/`, published to GitHub Pages by the `docs` workflow) is
+made from the docs and the source. To check and build it locally:
+
+```powershell
+python src\eng\gen_docs_site.py --check
+python src\eng\gen_docs_site.py
+mkdocs build --strict -f src\docs-siteuild-site\mkdocs.yml -d <a folder outside the checkout>
+```
 
 A README follows `README-TEMPLATE.md`, beside the repositories: one sentence at the top that a
 stranger to the subject understands, four badges that can each be wrong, install before

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    RetroServeUI had no tests at all. These cover the server-control layer, which is plain
+    RetroAdmin had no tests at all. These cover the server-control layer, which is plain
     services with no Avalonia dependency, so no headless UI harness is needed here.
   -->
   <PropertyGroup>
