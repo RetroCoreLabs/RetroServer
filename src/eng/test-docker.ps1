@@ -28,4 +28,10 @@ finally {
     $volumes = docker inspect -f '{{range .Mounts}}{{.Name}} {{end}}' $id
     docker stop -t 30 $id | Out-Null
     foreach ($v in ($volumes -split ' ')) { if ($v) { docker volume rm $v 2>$null | Out-Null } }
+    # The container was started with --rm, and Docker removes its anonymous volume together with it,
+    # so the "docker volume rm" above normally finds nothing and returns 1. PowerShell ends the script
+    # with the exit code of the LAST native command, so that 1 turned a passed health check into a
+    # failed CI step (the log read "answers /health with OK" and then "exit code 1", 24 November 2026).
+    # A real failure never gets here: the health check and "docker run" throw before this point.
+    $global:LASTEXITCODE = 0
 }
